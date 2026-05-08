@@ -45,6 +45,12 @@ export default function SettingsPage() {
     try {
       const merchant = new PublicKey(merchantAddr);
       const [allowlistPda] = findAllowlistAccountPda(agentPda, 0);
+
+      const allowlistInfo = await client.program.provider.connection.getAccountInfo(allowlistPda);
+      if (!allowlistInfo) {
+        await client.createAllowlist(agentPda, 0);
+      }
+
       await client.addMerchant(
         agentPda,
         allowlistPda,

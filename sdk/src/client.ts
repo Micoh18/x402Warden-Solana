@@ -14,6 +14,7 @@ import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PROGRAM_ID } from "./constants";
 import {
   findPolicyAccountPda,
+  findAllowlistAccountPda,
   findPaymentEscrowPda,
   findDisputeAccountPda,
   findEscrowTokenAccountPda,
@@ -86,6 +87,23 @@ export class X402WardenClient {
         owner: this.provider.wallet.publicKey,
         agentAccount: agentPda,
         policyAccount: policyPda,
+      })
+      .rpc();
+  }
+
+  async createAllowlist(
+    agentPda: PublicKey,
+    pageIndex: number = 0
+  ): Promise<string> {
+    const [allowlistPda] = findAllowlistAccountPda(agentPda, pageIndex, this.programId);
+
+    return this.program.methods
+      .createAllowlist(pageIndex)
+      .accounts({
+        owner: this.provider.wallet.publicKey,
+        agentAccount: agentPda,
+        allowlistAccount: allowlistPda,
+        systemProgram: SystemProgram.programId,
       })
       .rpc();
   }
