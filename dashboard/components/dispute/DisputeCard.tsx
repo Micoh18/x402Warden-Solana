@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { shortenAddress, formatTimestamp, getDisputeStateKey } from "@/lib/utils";
+import { shortenAddress, formatTimestamp, getDisputeStateKey, bnToNumber } from "@/lib/utils";
 import type { DisputeWithPda } from "@/hooks/useDisputes";
 import { REASON_NO_RESPONSE, REASON_BAD_RESPONSE, REASON_TIMEOUT, REASON_OTHER } from "@x402warden/sdk";
 import { Clock, FileWarning, User } from "lucide-react";
@@ -63,7 +63,7 @@ interface DisputeCardProps {
 export function DisputeCard({ dispute }: DisputeCardProps) {
   const { account } = dispute;
   const state = getDisputeStateKey(account.state);
-  const deadlineTs = account.merchantResponseDeadline.toNumber();
+  const deadlineTs = bnToNumber(account.merchantResponseDeadline);
   const now = Date.now() / 1000;
   const deadlinePassed = now > deadlineTs;
 
