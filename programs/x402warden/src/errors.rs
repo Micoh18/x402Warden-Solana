@@ -34,4 +34,6 @@ pub enum ErrorCode {
     AgentNotPaused,
     #[msg("Invalid dispute window duration")]
     InvalidDisputeWindow,
+    #[msg("Invalid dispute reason code")]
+    InvalidReasonCode,
 }

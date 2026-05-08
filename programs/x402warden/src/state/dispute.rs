@@ -28,4 +28,6 @@ pub enum DisputeState {
 
 pub const RESOLUTION_NONE: u8 = 0;
 pub const RESOLUTION_FULL_REFUND: u8 = 1;
+// Used by SDK/clients to interpret on-chain state
+#[allow(dead_code)]
 pub const RESOLUTION_MERCHANT_WINS: u8 = 2;

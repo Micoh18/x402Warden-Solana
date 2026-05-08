@@ -41,6 +41,14 @@ pub fn handler(
     reason_code: u8,
     reason_uri: [u8; 64],
 ) -> Result<()> {
+    require!(
+        reason_code == REASON_NO_RESPONSE
+            || reason_code == REASON_BAD_RESPONSE
+            || reason_code == REASON_TIMEOUT
+            || reason_code == REASON_OTHER,
+        ErrorCode::InvalidReasonCode
+    );
+
     let escrow = &ctx.accounts.payment_escrow;
     let clock = Clock::get()?;
 
@@ -57,7 +65,7 @@ pub fn handler(
     dispute.opened_at = clock.unix_timestamp;
     dispute.merchant_response_deadline = clock.unix_timestamp + MERCHANT_RESPONSE_DEADLINE_SEC;
     dispute.state = DisputeState::Open;
-    dispute.resolution = 0;
+    dispute.resolution = RESOLUTION_NONE;
     dispute.bump = ctx.bumps.dispute_account;
 
     let escrow = &mut ctx.accounts.payment_escrow;
