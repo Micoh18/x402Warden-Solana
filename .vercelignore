@@ -1,0 +1,14 @@
+node_modules
+target
+test-ledger
+.anchor
+.claude
+.agents
+.next
+demo
+programs
+tests
+scripts
+docs
+Cargo.lock
+*.so

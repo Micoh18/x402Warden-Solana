@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd sdk && npx tsc && cd ../dashboard && npx next build",
+  "outputDirectory": "dashboard/.next",
+  "installCommand": "npm install --legacy-peer-deps"
+}
