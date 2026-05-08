@@ -55,12 +55,16 @@ export default function NewAgentPage() {
   }
 
   return (
-    <div className="relative min-h-[80vh] flex flex-col items-center justify-center">
-      <div className="absolute inset-0 -z-10 overflow-hidden">
+    <div className="relative -m-6 min-h-[calc(100vh-60px)] flex flex-col items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 z-0">
         <WireframeGrid />
       </div>
 
-      <div className="w-full max-w-lg relative z-10">
+      <div className="absolute inset-0 z-[1] pointer-events-none" style={{
+        background: "radial-gradient(ellipse 50% 50% at 50% 50%, transparent 20%, rgba(12, 16, 21, 0.7) 80%)",
+      }} />
+
+      <div className="w-full max-w-lg relative z-10 px-6">
         <Link
           href="/agents"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-all duration-200 mb-8 lumina-pill px-3 py-1.5"

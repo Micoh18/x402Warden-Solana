@@ -15,15 +15,16 @@ export function WireframeGrid({ className = "" }: WireframeGridProps) {
     if (!container) return;
 
     const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0c1015, 0.035);
 
     const camera = new THREE.PerspectiveCamera(
       50,
       container.offsetWidth / container.offsetHeight,
       0.1,
-      100
+      200
     );
-    camera.position.set(0, 3.5, 6);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 8, 14);
+    camera.lookAt(0, 0, -5);
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
@@ -31,11 +32,11 @@ export function WireframeGrid({ className = "" }: WireframeGridProps) {
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(container.offsetWidth, container.offsetHeight);
-    renderer.setClearColor(0x000000, 0);
+    renderer.setClearColor(0x0c1015, 0);
     container.appendChild(renderer.domElement);
 
-    const gridSize = 40;
-    const gridDivisions = 40;
+    const gridSize = 60;
+    const gridDivisions = 50;
     const halfSize = gridSize / 2;
     const step = gridSize / gridDivisions;
 
@@ -67,81 +68,82 @@ export function WireframeGrid({ className = "" }: WireframeGridProps) {
     const material = new THREE.LineBasicMaterial({
       color: new THREE.Color(0x7a9b8e),
       transparent: true,
-      opacity: 0.18,
+      opacity: 0.22,
     });
 
     const gridMesh = new THREE.LineSegments(geometry, material);
-    gridMesh.rotation.x = -Math.PI * 0.35;
-    gridMesh.position.y = -1.5;
     scene.add(gridMesh);
 
     const pointsGeometry = new THREE.BufferGeometry();
-    const pointCount = 120;
+    const pointCount = 200;
     const pointPositions = new Float32Array(pointCount * 3);
-    const pointAlphas = new Float32Array(pointCount);
 
     for (let i = 0; i < pointCount; i++) {
-      pointPositions[i * 3] = (Math.random() - 0.5) * 20;
-      pointPositions[i * 3 + 1] = (Math.random() - 0.5) * 8;
-      pointPositions[i * 3 + 2] = (Math.random() - 0.5) * 20;
-      pointAlphas[i] = Math.random();
+      pointPositions[i * 3] = (Math.random() - 0.5) * 40;
+      pointPositions[i * 3 + 1] = Math.random() * 6;
+      pointPositions[i * 3 + 2] = (Math.random() - 0.5) * 40;
     }
 
     pointsGeometry.setAttribute("position", new THREE.BufferAttribute(pointPositions, 3));
 
     const pointsMaterial = new THREE.PointsMaterial({
       color: new THREE.Color(0xa0b5aa),
-      size: 0.04,
+      size: 0.06,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.35,
       sizeAttenuation: true,
     });
 
     const points = new THREE.Points(pointsGeometry, pointsMaterial);
     scene.add(points);
 
-    const ambientLight = new THREE.AmbientLight(0x7a9b8e, 0.3);
-    scene.add(ambientLight);
-
-    let mouseX = 0;
-    let mouseY = 0;
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+    let smoothMouseX = 0;
+    let smoothMouseY = 0;
 
     function handlePointer(e: MouseEvent) {
-      const rect = container!.getBoundingClientRect();
-      mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     }
-    container.addEventListener("mousemove", handlePointer);
+    window.addEventListener("mousemove", handlePointer);
 
     let time = 0;
     let animationId: number;
 
+    const basePositions = new Float32Array(positionArray.length);
+    basePositions.set(positionArray);
+
     function animate() {
-      time += 0.008;
+      time += 0.006;
+
+      smoothMouseX += (targetMouseX - smoothMouseX) * 0.03;
+      smoothMouseY += (targetMouseY - smoothMouseY) * 0.03;
 
       const positions = geometry.attributes.position.array as Float32Array;
       const count = gridDivisions + 1;
       for (let i = 0; i < count; i++) {
         for (let j = 0; j < count; j++) {
           const idx = (i * count + j) * 3;
-          const x = positions[idx];
-          const z = positions[idx + 2];
+          const x = basePositions[idx];
+          const z = basePositions[idx + 2];
           const dist = Math.sqrt(x * x + z * z);
           positions[idx + 1] =
-            Math.sin(dist * 0.3 + time * 1.5) * 0.4 *
-            Math.exp(-dist * 0.04);
+            Math.sin(dist * 0.2 + time * 1.2) * 0.6 *
+            Math.exp(-dist * 0.025) +
+            Math.sin(x * 0.15 + time * 0.8) * 0.3 *
+            Math.cos(z * 0.15 + time * 0.6) * 0.3;
         }
       }
       geometry.attributes.position.needsUpdate = true;
 
-      gridMesh.rotation.z = mouseX * 0.02;
-      points.rotation.y = time * 0.05;
+      camera.position.x = smoothMouseX * 3;
+      camera.position.y = 8 - smoothMouseY * 1.5;
+      camera.lookAt(smoothMouseX * 1, 0, -5 + smoothMouseY * 2);
 
-      camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.02;
-      camera.position.y += (3.5 - mouseY * 0.3 - camera.position.y) * 0.02;
-      camera.lookAt(0, 0, 0);
+      points.rotation.y = time * 0.03;
 
-      const breath = Math.sin(time * 1.2) * 0.04 + 0.18;
+      const breath = Math.sin(time * 1.0) * 0.05 + 0.22;
       material.opacity = breath;
 
       renderer.render(scene, camera);
@@ -163,7 +165,7 @@ export function WireframeGrid({ className = "" }: WireframeGridProps) {
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", handleResize);
-      container.removeEventListener("mousemove", handlePointer);
+      window.removeEventListener("mousemove", handlePointer);
       renderer.dispose();
       geometry.dispose();
       material.dispose();
@@ -178,7 +180,7 @@ export function WireframeGrid({ className = "" }: WireframeGridProps) {
   return (
     <div
       ref={containerRef}
-      className={`absolute inset-0 pointer-events-auto ${className}`}
+      className={`absolute inset-0 ${className}`}
       aria-hidden="true"
     />
   );
