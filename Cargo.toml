@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["programs/x402warden"]
+
+[workspace.dependencies]
+anchor-lang = "0.31.0"
+anchor-spl = "0.31.0"
