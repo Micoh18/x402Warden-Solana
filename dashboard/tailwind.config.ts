@@ -44,10 +44,14 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         warden: {
-          teal: "#00D992",
-          cyan: "#00B4D8",
-          dark: "#070B14",
-          surface: "#0D1220",
+          body: "#0A3135",
+          "body-dark": "#073034",
+          "body-light": "#0D4044",
+          soul: "#01F5F2",
+          "soul-light": "#56FFE8",
+          heart: "#04D9D5",
+          bone: "#1A4A4A",
+          deep: "#00A3A3",
         },
       },
       borderRadius: {

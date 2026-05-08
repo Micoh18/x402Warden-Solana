@@ -43,9 +43,9 @@ export default function AgentsPage() {
 
       {!isLoading && !error && agents && agents.length === 0 && (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="relative h-20 w-20 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-center mb-6 glow-primary">
-            <Shield className="h-9 w-9 text-primary" />
-            <div className="absolute inset-0 blur-xl bg-primary/10 rounded-2xl" />
+          <div className="relative h-20 w-20 rounded-2xl bg-warden-soul/5 border border-warden-soul/20 flex items-center justify-center mb-6 glow-primary">
+            <Shield className="h-9 w-9 text-warden-soul" />
+            <div className="absolute inset-0 blur-xl bg-warden-soul/10 rounded-2xl animate-glow-pulse" />
           </div>
           <h2 className="text-xl font-display font-semibold mb-2 tracking-tight">No agents yet</h2>
           <p className="text-muted-foreground mb-8 max-w-md text-sm leading-relaxed">

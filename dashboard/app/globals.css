@@ -4,28 +4,36 @@
 
 @layer base {
   :root {
-    --background: 225 25% 3%;
-    --foreground: 210 20% 90%;
-    --card: 225 20% 6%;
-    --card-foreground: 210 20% 90%;
-    --primary: 162 95% 42%;
-    --primary-foreground: 225 25% 3%;
-    --secondary: 225 15% 12%;
-    --secondary-foreground: 210 20% 85%;
-    --muted: 225 15% 10%;
-    --muted-foreground: 220 10% 50%;
-    --accent: 225 20% 14%;
-    --accent-foreground: 210 20% 90%;
+    --background: 176 70% 12%;
+    --foreground: 170 30% 88%;
+    --card: 178 65% 10%;
+    --card-foreground: 170 30% 88%;
+    --primary: 179 99% 48%;
+    --primary-foreground: 180 70% 6%;
+    --secondary: 180 40% 14%;
+    --secondary-foreground: 170 30% 82%;
+    --muted: 180 35% 12%;
+    --muted-foreground: 175 15% 48%;
+    --accent: 168 60% 62%;
+    --accent-foreground: 180 70% 6%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 225 12% 14%;
-    --input: 225 15% 12%;
-    --ring: 162 95% 42%;
+    --border: 180 30% 16%;
+    --input: 180 35% 14%;
+    --ring: 179 99% 48%;
     --radius: 0.625rem;
-    --glow-primary: 162 95% 42%;
-    --glow-blue: 210 100% 55%;
+    --glow-primary: 179 99% 48%;
+    --glow-cyan: 168 100% 69%;
     --glow-amber: 38 95% 55%;
     --glow-red: 0 85% 55%;
+    --warden-body: #0A3135;
+    --warden-body-dark: #073034;
+    --warden-body-light: #0D4044;
+    --warden-soul: #01F5F2;
+    --warden-soul-light: #56FFE8;
+    --warden-heart: #04D9D5;
+    --warden-bone: #1A4A4A;
+    --warden-deep: #00A3A3;
   }
 }
 
@@ -36,12 +44,15 @@
 
   body {
     @apply bg-background text-foreground;
+    background-color: var(--warden-body-dark);
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, hsla(162, 95%, 42%, 0.06), transparent),
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(1, 245, 242, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 60%, rgba(0, 163, 163, 0.04), transparent),
       linear-gradient(
         180deg,
-        hsl(225 25% 3%) 0%,
-        hsl(225 25% 2.5%) 100%
+        var(--warden-body-dark) 0%,
+        var(--warden-body) 50%,
+        var(--warden-body-dark) 100%
       );
     background-attachment: fixed;
   }
@@ -53,8 +64,8 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-      linear-gradient(hsla(162, 95%, 42%, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, hsla(162, 95%, 42%, 0.03) 1px, transparent 1px);
+      linear-gradient(rgba(1, 245, 242, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(1, 245, 242, 0.03) 1px, transparent 1px);
     background-size: 60px 60px;
     mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 10%, transparent 70%);
   }
@@ -63,33 +74,38 @@
     width: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: hsl(225 25% 3%);
+    background: var(--warden-body-dark);
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(225 15% 16%);
+    background: var(--warden-bone);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(162 95% 42% / 0.4);
+    background: var(--warden-heart);
   }
 }
 
 @layer utilities {
   .glow-primary {
     box-shadow:
-      0 0 12px -2px hsla(var(--glow-primary) / 0.25),
-      0 0 36px -6px hsla(var(--glow-primary) / 0.1);
+      0 0 12px -2px rgba(1, 245, 242, 0.25),
+      0 0 36px -6px rgba(1, 245, 242, 0.1);
   }
   .glow-primary-lg {
     box-shadow:
-      0 0 20px -2px hsla(var(--glow-primary) / 0.35),
-      0 0 60px -10px hsla(var(--glow-primary) / 0.15),
-      inset 0 1px 0 0 hsla(var(--glow-primary) / 0.1);
+      0 0 20px -2px rgba(1, 245, 242, 0.35),
+      0 0 60px -10px rgba(1, 245, 242, 0.15),
+      inset 0 1px 0 0 rgba(1, 245, 242, 0.1);
+  }
+  .glow-soul {
+    box-shadow:
+      0 0 12px -2px rgba(86, 255, 232, 0.3),
+      0 0 36px -6px rgba(86, 255, 232, 0.1);
   }
   .glow-blue {
     box-shadow:
-      0 0 12px -2px hsla(var(--glow-blue) / 0.3),
-      0 0 36px -6px hsla(var(--glow-blue) / 0.1);
+      0 0 12px -2px rgba(4, 217, 213, 0.3),
+      0 0 36px -6px rgba(4, 217, 213, 0.1);
   }
   .glow-amber {
     box-shadow:
@@ -103,20 +119,20 @@
   }
 
   .text-glow-primary {
-    text-shadow: 0 0 20px hsla(var(--glow-primary) / 0.5);
+    text-shadow: 0 0 20px rgba(1, 245, 242, 0.5);
   }
-  .text-glow-blue {
-    text-shadow: 0 0 20px hsla(var(--glow-blue) / 0.4);
+  .text-glow-soul {
+    text-shadow: 0 0 24px rgba(86, 255, 232, 0.4);
   }
 
   .border-glow {
-    border-color: hsla(var(--glow-primary) / 0.2);
+    border-color: rgba(1, 245, 242, 0.2);
   }
   .border-glow-hover:hover {
-    border-color: hsla(var(--glow-primary) / 0.4);
+    border-color: rgba(1, 245, 242, 0.35);
     box-shadow:
-      0 0 16px -4px hsla(var(--glow-primary) / 0.2),
-      inset 0 1px 0 0 hsla(var(--glow-primary) / 0.06);
+      0 0 16px -4px rgba(1, 245, 242, 0.2),
+      inset 0 1px 0 0 rgba(1, 245, 242, 0.06);
   }
 
   .noise {
@@ -176,9 +192,11 @@
 .shimmer-text {
   background: linear-gradient(
     110deg,
-    hsl(var(--foreground)) 35%,
-    hsl(var(--primary)) 50%,
-    hsl(var(--foreground)) 65%
+    hsl(var(--foreground)) 30%,
+    var(--warden-soul) 45%,
+    var(--warden-soul-light) 50%,
+    var(--warden-soul) 55%,
+    hsl(var(--foreground)) 70%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
@@ -188,16 +206,17 @@
 }
 
 .wallet-adapter-button-trigger {
-  background: hsl(var(--primary)) !important;
+  background: var(--warden-soul) !important;
+  color: var(--warden-body-dark) !important;
   border-radius: var(--radius) !important;
   font-family: var(--font-body) !important;
   font-weight: 600 !important;
   letter-spacing: 0.02em !important;
-  box-shadow: 0 0 16px -4px hsla(var(--glow-primary) / 0.3) !important;
+  box-shadow: 0 0 16px -4px rgba(1, 245, 242, 0.35) !important;
   transition: box-shadow 0.2s ease, transform 0.15s ease !important;
 }
 
 .wallet-adapter-button-trigger:hover {
-  box-shadow: 0 0 24px -4px hsla(var(--glow-primary) / 0.5) !important;
+  box-shadow: 0 0 28px -4px rgba(1, 245, 242, 0.55) !important;
   transform: translateY(-1px) !important;
 }
