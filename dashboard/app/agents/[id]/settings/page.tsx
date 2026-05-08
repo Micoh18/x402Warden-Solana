@@ -18,6 +18,7 @@ import type { MerchantEntry } from "@x402warden/sdk";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, Plus, Trash2, Users } from "lucide-react";
 import { shortenAddress, lamportsToUsdc } from "@/lib/utils";
+import { getMerchantName, setMerchantName as saveMerchantName, removeMerchantName } from "@/lib/merchant-names";
 
 export default function SettingsPage() {
   const params = useParams();
@@ -31,6 +32,7 @@ export default function SettingsPage() {
   const queryClient = useQueryClient();
 
   const [merchantAddr, setMerchantAddr] = useState("");
+  const [merchantName, setMerchantName] = useState("");
   const [category, setCategory] = useState("0");
   const [maxOverride, setMaxOverride] = useState("1000");
   const [merchantLoading, setMerchantLoading] = useState(false);
@@ -81,7 +83,11 @@ export default function SettingsPage() {
         Number(category),
         new BN(Number(maxOverride) * 1_000_000)
       );
+      if (merchantName.trim()) {
+        saveMerchantName(merchantAddr, merchantName.trim());
+      }
       setMerchantAddr("");
+      setMerchantName("");
       queryClient.invalidateQueries({ queryKey: ["agent"] });
     } catch (err: any) {
       setMerchantError(err.message || "Failed to add merchant");
@@ -145,19 +151,26 @@ export default function SettingsPage() {
             <p className="text-sm text-muted-foreground text-center py-4">No merchants in allowlist yet.</p>
           ) : (
             <div className="space-y-2">
-              {merchants.map((m, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-lg border bg-card/50">
-                  <div className="flex flex-col gap-1">
-                    <span className="font-mono text-xs">{m.merchantPubkey.toBase58()}</span>
-                    <div className="flex gap-2">
-                      <Badge variant="secondary" className="text-xs">Cat: {m.category}</Badge>
-                      <Badge variant="outline" className="text-xs">
-                        Max: {lamportsToUsdc(m.maxPerCallOverride)} USDC
-                      </Badge>
+              {merchants.map((m, i) => {
+                const addr = m.merchantPubkey.toBase58();
+                const name = getMerchantName(addr);
+                return (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border bg-card/50">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        {name && <span className="text-sm font-medium">{name}</span>}
+                        <span className="font-mono text-xs text-muted-foreground">{shortenAddress(addr, 6)}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Badge variant="secondary" className="text-xs">Cat: {m.category}</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          Max: {lamportsToUsdc(m.maxPerCallOverride)} USDC
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
@@ -169,14 +182,24 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddMerchant} className="space-y-4">
-            <div className="space-y-2">
-              <Label>Merchant Address</Label>
-              <Input
-                value={merchantAddr}
-                onChange={(e) => setMerchantAddr(e.target.value)}
-                placeholder="Merchant public key"
-                className="font-mono text-xs"
-              />
+            <div className="grid grid-cols-[1fr_auto] gap-3">
+              <div className="space-y-2">
+                <Label>Merchant Address</Label>
+                <Input
+                  value={merchantAddr}
+                  onChange={(e) => setMerchantAddr(e.target.value)}
+                  placeholder="Merchant public key"
+                  className="font-mono text-xs"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Name (optional)</Label>
+                <Input
+                  value={merchantName}
+                  onChange={(e) => setMerchantName(e.target.value)}
+                  placeholder="e.g. Research API"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
