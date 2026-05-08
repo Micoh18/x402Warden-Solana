@@ -27,6 +27,7 @@ pub struct InitializeAgent<'info> {
     )]
     pub policy_account: Account<'info, PolicyAccount>,
 
+    /// CHECK: validated by the owner off-chain; stored as reference only
     pub usdc_token_account: AccountInfo<'info>,
 
     pub system_program: Program<'info, System>,

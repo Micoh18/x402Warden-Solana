@@ -55,6 +55,7 @@ pub fn handler(ctx: Context<MerchantAccept>) -> Result<()> {
         &[bump],
     ];
 
+    let signer_seeds = &[escrow_seeds];
     let transfer_ctx = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         Transfer {
@@ -62,7 +63,7 @@ pub fn handler(ctx: Context<MerchantAccept>) -> Result<()> {
             to: ctx.accounts.owner_token_account.to_account_info(),
             authority: ctx.accounts.payment_escrow.to_account_info(),
         },
-        &[escrow_seeds],
+        signer_seeds,
     );
     token::transfer(transfer_ctx, escrow.amount)?;
 

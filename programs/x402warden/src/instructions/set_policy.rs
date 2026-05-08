@@ -27,10 +27,9 @@ pub struct SetPolicy<'info> {
 
     #[account(
         mut,
-        has_one = agent @ ErrorCode::Unauthorized,
         seeds = [POLICY_SEED, agent_account.key().as_ref()],
         bump = policy_account.bump,
-        constraint = policy_account.agent == agent_account.key(),
+        constraint = policy_account.agent == agent_account.key() @ ErrorCode::Unauthorized,
     )]
     pub policy_account: Account<'info, PolicyAccount>,
 }

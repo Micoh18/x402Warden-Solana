@@ -2,6 +2,9 @@
 resolver = "2"
 members = ["programs/x402warden"]
 
+[profile.release]
+overflow-checks = true
+
 [workspace.dependencies]
 anchor-lang = "0.31.0"
 anchor-spl = "0.31.0"
