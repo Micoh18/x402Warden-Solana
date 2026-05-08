@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ConnectButton } from "@/components/wallet/ConnectButton";
+import { ParticleField } from "@/components/ui/particle-field";
 import { Shield, Zap, Lock, ArrowRight, Hexagon, Fingerprint } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -11,7 +12,10 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] opacity-30">
+      <div className="absolute inset-0 z-0">
+        <ParticleField color="122, 155, 142" particleCount={100} speed={0.2} className="opacity-50" />
+      </div>
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] opacity-30 z-[1]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(122,155,142,0.08)_0%,_rgba(74,101,96,0.03)_40%,_transparent_70%)]" />
       </div>
 
