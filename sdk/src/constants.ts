@@ -1,7 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 
 export const PROGRAM_ID = new PublicKey(
-  "11111111111111111111111111111111"
+  "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A"
 );
 
 export const AGENT_SEED = Buffer.from("agent");

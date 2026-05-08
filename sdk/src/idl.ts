@@ -1,5 +1,5 @@
 const IDL = {
-  address: "11111111111111111111111111111111",
+  address: "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A",
   metadata: {
     name: "x402_warden",
     version: "0.1.0",
@@ -42,7 +42,7 @@ const IDL = {
             ],
           },
         },
-        { name: "system_program", address: "11111111111111111111111111111111" },
+        { name: "system_program", address: "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A" },
       ],
       args: [
         { name: "merchant", type: "pubkey" },
@@ -109,7 +109,7 @@ const IDL = {
           },
         },
         { name: "usdc_token_account" },
-        { name: "system_program", address: "11111111111111111111111111111111" },
+        { name: "system_program", address: "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A" },
       ],
       args: [{ name: "agent_id", type: "u64" }],
     },
@@ -182,7 +182,7 @@ const IDL = {
           },
         },
         { name: "owner", relations: ["agent_account"] },
-        { name: "system_program", address: "11111111111111111111111111111111" },
+        { name: "system_program", address: "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A" },
       ],
       args: [
         { name: "reason_code", type: "u8" },
@@ -258,8 +258,8 @@ const IDL = {
         },
         { name: "usdc_mint" },
         { name: "token_program", address: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
-        { name: "system_program", address: "11111111111111111111111111111111" },
-        { name: "rent", address: "SysvarRent111111111111111111111111111111111" },
+        { name: "system_program", address: "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A" },
+        { name: "rent", address: "SysvarRent9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A1" },
       ],
       args: [
         { name: "amount", type: "u64" },

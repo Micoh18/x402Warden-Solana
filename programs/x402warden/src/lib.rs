@@ -8,7 +8,7 @@ mod state;
 
 use instructions::*;
 
-declare_id!("11111111111111111111111111111111");
+declare_id!("9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A");
 
 #[program]
 pub mod x402_warden {

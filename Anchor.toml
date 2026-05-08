@@ -6,10 +6,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-x402_warden = "11111111111111111111111111111111"
+x402_warden = "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A"
 
 [programs.devnet]
-x402_warden = "11111111111111111111111111111111"
+x402_warden = "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A"
 
 [provider]
 cluster = "devnet"

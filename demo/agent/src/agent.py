@@ -437,7 +437,7 @@ def main():
 
     rpc_url = os.environ.get("SOLANA_RPC_URL", "http://localhost:8899")
     server_url = os.environ.get("DEMO_SERVER_URL", "http://localhost:3001")
-    program_id = os.environ.get("PROGRAM_ID", "11111111111111111111111111111111")
+    program_id = os.environ.get("PROGRAM_ID", "9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A")
 
     # Banner
     console.print()
