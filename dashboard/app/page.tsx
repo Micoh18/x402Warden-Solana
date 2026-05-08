@@ -20,7 +20,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(122,155,142,0.08)_0%,_rgba(74,101,96,0.03)_40%,_transparent_70%)]" />
       </div>
 
-      <nav className="relative z-10 border-b border-warden-bone/15 px-6 py-4 flex items-center justify-between backdrop-blur-md bg-warden-black/80">
+      <nav className="relative z-10 px-6 py-4 flex items-center justify-between lumina-header">
         <div className="flex items-center gap-2.5">
           <div className="relative">
             <Shield className="h-7 w-7 text-warden-lichen" />
