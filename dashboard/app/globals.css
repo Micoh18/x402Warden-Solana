@@ -4,22 +4,22 @@
 
 @layer base {
   :root {
-    --background: 176 70% 12%;
-    --foreground: 170 30% 88%;
-    --card: 178 65% 10%;
-    --card-foreground: 170 30% 88%;
+    --background: 192 30% 4%;
+    --foreground: 180 15% 85%;
+    --card: 190 25% 7%;
+    --card-foreground: 180 15% 85%;
     --primary: 179 99% 48%;
-    --primary-foreground: 180 70% 6%;
-    --secondary: 180 40% 14%;
-    --secondary-foreground: 170 30% 82%;
-    --muted: 180 35% 12%;
-    --muted-foreground: 175 15% 48%;
+    --primary-foreground: 192 40% 3%;
+    --secondary: 190 20% 10%;
+    --secondary-foreground: 180 12% 75%;
+    --muted: 190 18% 9%;
+    --muted-foreground: 180 8% 42%;
     --accent: 168 60% 62%;
-    --accent-foreground: 180 70% 6%;
+    --accent-foreground: 192 40% 3%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 180 30% 16%;
-    --input: 180 35% 14%;
+    --border: 190 15% 12%;
+    --input: 190 18% 10%;
     --ring: 179 99% 48%;
     --radius: 0.625rem;
     --glow-primary: 179 99% 48%;
@@ -27,13 +27,14 @@
     --glow-amber: 38 95% 55%;
     --glow-red: 0 85% 55%;
     --warden-body: #0A3135;
-    --warden-body-dark: #073034;
+    --warden-body-dark: #070D10;
     --warden-body-light: #0D4044;
     --warden-soul: #01F5F2;
     --warden-soul-light: #56FFE8;
     --warden-heart: #04D9D5;
     --warden-bone: #1A4A4A;
     --warden-deep: #00A3A3;
+    --warden-black: #0C1015;
   }
 }
 
@@ -44,15 +45,15 @@
 
   body {
     @apply bg-background text-foreground;
-    background-color: var(--warden-body-dark);
+    background-color: var(--warden-black);
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(1, 245, 242, 0.08), transparent),
-      radial-gradient(ellipse 60% 40% at 80% 60%, rgba(0, 163, 163, 0.04), transparent),
+      radial-gradient(ellipse 60% 40% at 50% -10%, rgba(1, 245, 242, 0.04), transparent),
+      radial-gradient(ellipse 40% 30% at 80% 70%, rgba(0, 163, 163, 0.02), transparent),
       linear-gradient(
         180deg,
-        var(--warden-body-dark) 0%,
-        var(--warden-body) 50%,
-        var(--warden-body-dark) 100%
+        var(--warden-black) 0%,
+        var(--warden-body-dark) 50%,
+        var(--warden-black) 100%
       );
     background-attachment: fixed;
   }
@@ -64,8 +65,8 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-      linear-gradient(rgba(1, 245, 242, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(1, 245, 242, 0.03) 1px, transparent 1px);
+      linear-gradient(rgba(1, 245, 242, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(1, 245, 242, 0.015) 1px, transparent 1px);
     background-size: 60px 60px;
     mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 10%, transparent 70%);
   }
@@ -74,7 +75,7 @@
     width: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: var(--warden-body-dark);
+    background: var(--warden-black);
   }
   ::-webkit-scrollbar-thumb {
     background: var(--warden-bone);

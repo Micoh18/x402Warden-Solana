@@ -44,8 +44,9 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         warden: {
+          black: "#0C1015",
           body: "#0A3135",
-          "body-dark": "#073034",
+          "body-dark": "#070D10",
           "body-light": "#0D4044",
           soul: "#01F5F2",
           "soul-light": "#56FFE8",

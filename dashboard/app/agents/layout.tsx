@@ -19,7 +19,7 @@ export default function AgentsLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="relative border-b border-border/30 px-6 py-3.5 flex items-center justify-between sticky top-0 bg-background/70 backdrop-blur-xl z-50">
+      <nav className="relative border-b border-warden-bone/15 px-6 py-3.5 flex items-center justify-between sticky top-0 bg-warden-black/85 backdrop-blur-xl z-50">
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-warden-soul/30 to-transparent" />
         <Link href="/agents" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
           <div className="relative">

@@ -20,7 +20,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(1,245,242,0.12)_0%,_rgba(0,163,163,0.04)_40%,_transparent_70%)]" />
       </div>
 
-      <nav className="relative z-10 border-b border-border/30 px-6 py-4 flex items-center justify-between backdrop-blur-md bg-background/60">
+      <nav className="relative z-10 border-b border-warden-bone/15 px-6 py-4 flex items-center justify-between backdrop-blur-md bg-warden-black/80">
         <div className="flex items-center gap-2.5">
           <div className="relative">
             <Shield className="h-7 w-7 text-warden-soul" />
@@ -56,7 +56,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
-            <div className="animate-fade-in-up-2 group relative p-6 rounded-xl border border-warden-bone/50 bg-warden-body/60 noise border-glow-hover transition-all duration-300">
+            <div className="animate-fade-in-up-2 group relative p-6 rounded-xl border border-warden-bone/30 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
               <div className="relative h-11 w-11 rounded-lg bg-warden-soul/5 border border-warden-soul/20 flex items-center justify-center mb-4 transition-all duration-300">
                 <Lock className="h-5 w-5 text-warden-soul" />
                 <div className="absolute inset-0 blur-lg bg-warden-soul/0 group-hover:bg-warden-soul/15 rounded-lg transition-all duration-500" />
@@ -67,7 +67,7 @@ export default function LandingPage() {
                 keep your AI agent under control.
               </p>
             </div>
-            <div className="animate-fade-in-up-3 group relative p-6 rounded-xl border border-warden-bone/50 bg-warden-body/60 noise border-glow-hover transition-all duration-300">
+            <div className="animate-fade-in-up-3 group relative p-6 rounded-xl border border-warden-bone/30 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
               <div className="relative h-11 w-11 rounded-lg bg-warden-heart/5 border border-warden-heart/20 flex items-center justify-center mb-4 transition-all duration-300">
                 <Fingerprint className="h-5 w-5 text-warden-heart" />
                 <div className="absolute inset-0 blur-lg bg-warden-heart/0 group-hover:bg-warden-heart/15 rounded-lg transition-all duration-500" />
@@ -78,7 +78,7 @@ export default function LandingPage() {
                 window before settlement.
               </p>
             </div>
-            <div className="animate-fade-in-up-4 group relative p-6 rounded-xl border border-warden-bone/50 bg-warden-body/60 noise border-glow-hover transition-all duration-300">
+            <div className="animate-fade-in-up-4 group relative p-6 rounded-xl border border-warden-bone/30 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
               <div className="relative h-11 w-11 rounded-lg bg-warden-soul-light/5 border border-warden-soul-light/20 flex items-center justify-center mb-4 transition-all duration-300">
                 <Hexagon className="h-5 w-5 text-warden-soul-light" />
                 <div className="absolute inset-0 blur-lg bg-warden-soul-light/0 group-hover:bg-warden-soul-light/15 rounded-lg transition-all duration-500" />
