@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { PublicKey } from "@solana/web3.js";
@@ -9,12 +9,15 @@ import { useAgent } from "@/hooks/useAgent";
 import { useProgram } from "@/hooks/useProgram";
 import { PolicyForm } from "@/components/policy/PolicyForm";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { findAllowlistAccountPda } from "@x402warden/sdk";
+import type { MerchantEntry } from "@x402warden/sdk";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, Trash2, Users } from "lucide-react";
+import { shortenAddress, lamportsToUsdc } from "@/lib/utils";
 
 export default function SettingsPage() {
   const params = useParams();
@@ -35,6 +38,26 @@ export default function SettingsPage() {
 
   const [removeAddr, setRemoveAddr] = useState("");
   const [removeLoading, setRemoveLoading] = useState(false);
+
+  const [merchants, setMerchants] = useState<MerchantEntry[]>([]);
+  const [merchantsLoading, setMerchantsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!client || !agentPda) return;
+    async function fetchAllowlist() {
+      setMerchantsLoading(true);
+      try {
+        const [allowlistPda] = findAllowlistAccountPda(agentPda!, 0);
+        const allowlist = await client!.getAllowlist(allowlistPda);
+        setMerchants(allowlist.merchants || []);
+      } catch {
+        setMerchants([]);
+      } finally {
+        setMerchantsLoading(false);
+      }
+    }
+    fetchAllowlist();
+  }, [client, agentPda, merchantLoading, removeLoading]);
 
   async function handleAddMerchant(e: React.FormEvent) {
     e.preventDefault();
@@ -105,6 +128,40 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-display font-bold tracking-tight">Agent Settings</h1>
 
       <PolicyForm agentPda={agentPda!} policy={data.policy} />
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm tracking-widest uppercase flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Current Allowlist ({merchants.length} merchants)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {merchantsLoading ? (
+            <div className="flex justify-center py-4">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : merchants.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">No merchants in allowlist yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {merchants.map((m, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-lg border bg-card/50">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-mono text-xs">{m.merchantPubkey.toBase58()}</span>
+                    <div className="flex gap-2">
+                      <Badge variant="secondary" className="text-xs">Cat: {m.category}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Max: {lamportsToUsdc(m.maxPerCallOverride)} USDC
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
