@@ -90,19 +90,19 @@ export default function SettingsPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       <Link
         href={`/agents/${agentPdaStr}`}
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to agent
       </Link>
 
-      <h1 className="text-2xl font-bold">Agent Settings</h1>
+      <h1 className="text-2xl font-display font-bold tracking-tight">Agent Settings</h1>
 
       <PolicyForm agentPda={agentPda!} policy={data.policy} />
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Add Merchant to Allowlist</CardTitle>
+          <CardTitle className="text-sm tracking-widest uppercase">Add Merchant to Allowlist</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAddMerchant} className="space-y-4">
@@ -137,7 +137,7 @@ export default function SettingsPage() {
               </div>
             </div>
             {merchantError && (
-              <p className="text-sm text-destructive">{merchantError}</p>
+              <p className="text-sm text-red-400 font-mono">{merchantError}</p>
             )}
             <Button type="submit" disabled={merchantLoading || !merchantAddr} className="w-full">
               {merchantLoading ? (
@@ -153,7 +153,7 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Remove Merchant</CardTitle>
+          <CardTitle className="text-sm tracking-widest uppercase">Remove Merchant</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRemoveMerchant} className="space-y-4">

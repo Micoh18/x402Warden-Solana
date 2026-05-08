@@ -43,8 +43,8 @@ export function PaymentTable({ payments, agentPda }: PaymentTableProps) {
   if (sorted.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-        <p className="text-lg">No payments yet</p>
-        <p className="text-sm mt-1">Payments will appear here when the agent makes x402 calls</p>
+        <p className="text-base font-display">No payments yet</p>
+        <p className="text-xs mt-1.5 font-mono tracking-wide opacity-60">Payments will appear here when the agent makes x402 calls</p>
       </div>
     );
   }

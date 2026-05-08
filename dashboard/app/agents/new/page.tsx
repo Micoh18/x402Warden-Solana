@@ -52,23 +52,23 @@ export default function NewAgentPage() {
     <div className="max-w-lg mx-auto">
       <Link
         href="/agents"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to agents
       </Link>
 
-      <Card>
+      <Card className="animate-fade-in-up">
         <CardHeader>
-          <CardTitle>Create Agent</CardTitle>
+          <CardTitle className="tracking-wide">Create Agent</CardTitle>
           <CardDescription>
             Initialize a new AI agent smart account with escrow and spending policies.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleCreate} className="space-y-5">
+          <form onSubmit={handleCreate} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="agentId">Agent ID</Label>
+              <Label htmlFor="agentId" className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Agent ID</Label>
               <Input
                 id="agentId"
                 type="number"
@@ -76,14 +76,15 @@ export default function NewAgentPage() {
                 value={agentId}
                 onChange={(e) => setAgentId(e.target.value)}
                 placeholder="Unique numeric identifier"
+                className="font-mono"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground/70">
                 A unique number to identify this agent under your wallet.
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="usdcAccount">USDC Token Account</Label>
+              <Label htmlFor="usdcAccount" className="font-mono text-xs uppercase tracking-widest text-muted-foreground">USDC Token Account</Label>
               <Input
                 id="usdcAccount"
                 value={usdcAccount}
@@ -91,13 +92,13 @@ export default function NewAgentPage() {
                 placeholder="Your USDC associated token account public key"
                 className="font-mono text-xs"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground/70">
                 The USDC token account that the agent will use for payments.
               </p>
             </div>
 
             {error && (
-              <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+              <div className="p-3 rounded-lg border border-red-500/20 bg-red-500/5 text-red-400 text-sm font-mono">
                 {error}
               </div>
             )}

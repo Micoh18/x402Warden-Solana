@@ -89,22 +89,22 @@ export default function AgentDetailPage() {
   const recentPayments = (payments || []).slice(0, 5);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div className="flex items-center justify-between animate-fade-in-up">
         <div className="flex items-center gap-4">
-          <Link href="/agents" className="text-muted-foreground hover:text-foreground">
+          <Link href="/agents" className="text-muted-foreground hover:text-primary transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold">Agent #{bnToNumber(agent.agentId)}</h1>
+              <h1 className="text-2xl font-display font-bold tracking-tight">Agent #{bnToNumber(agent.agentId)}</h1>
               {agent.paused ? (
                 <Badge variant="warning">Paused</Badge>
               ) : (
                 <Badge variant="success">Active</Badge>
               )}
             </div>
-            <p className="text-xs font-mono text-muted-foreground mt-1">
+            <p className="text-[11px] font-mono text-muted-foreground/70 mt-1 tracking-wider">
               {agentPdaStr}
             </p>
           </div>
@@ -140,40 +140,40 @@ export default function AgentDetailPage() {
       <AgentStats agent={agent} policy={policy} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 animate-fade-in-up-2">
           <CardHeader>
-            <CardTitle className="text-base">Policy</CardTitle>
+            <CardTitle className="text-sm tracking-widest uppercase">Policy</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Max / Call</span>
-              <span className="font-mono">${lamportsToUsdc(policy.maxPerCall)}</span>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground text-xs">Max / Call</span>
+              <span className="font-mono text-foreground">${lamportsToUsdc(policy.maxPerCall)}</span>
             </div>
-            <Separator />
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Max / Period</span>
-              <span className="font-mono">${lamportsToUsdc(policy.maxPerPeriod)}</span>
+            <Separator className="opacity-30" />
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground text-xs">Max / Period</span>
+              <span className="font-mono text-foreground">${lamportsToUsdc(policy.maxPerPeriod)}</span>
             </div>
-            <Separator />
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Spent in Period</span>
-              <span className="font-mono">${lamportsToUsdc(policy.spentInPeriod)}</span>
+            <Separator className="opacity-30" />
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground text-xs">Spent in Period</span>
+              <span className="font-mono text-primary">${lamportsToUsdc(policy.spentInPeriod)}</span>
             </div>
-            <Separator />
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Dispute Window</span>
-              <span>{policy.disputeWindowSeconds}s</span>
+            <Separator className="opacity-30" />
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground text-xs">Dispute Window</span>
+              <span className="font-mono">{policy.disputeWindowSeconds}s</span>
             </div>
-            <Separator />
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Allowlist</span>
+            <Separator className="opacity-30" />
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground text-xs">Allowlist</span>
               <Badge variant={policy.allowlistEnabled ? "default" : "secondary"}>
                 {policy.allowlistEnabled ? "Enabled" : "Disabled"}
               </Badge>
             </div>
-            <Separator />
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Auto-Settle</span>
+            <Separator className="opacity-30" />
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground text-xs">Auto-Settle</span>
               <Badge variant={policy.autoSettleEnabled ? "success" : "secondary"}>
                 {policy.autoSettleEnabled ? "On" : "Off"}
               </Badge>
@@ -181,9 +181,9 @@ export default function AgentDetailPage() {
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 animate-fade-in-up-3">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Recent Payments</CardTitle>
+            <CardTitle className="text-sm tracking-widest uppercase">Recent Payments</CardTitle>
             <div className="flex gap-2">
               <Link href={`/agents/${agentPdaStr}/payments`}>
                 <Button variant="ghost" size="sm">
