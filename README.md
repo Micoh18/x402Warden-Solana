@@ -177,13 +177,16 @@ anchor deploy --provider.cluster devnet  # devnet
 
 # 5. Run the dashboard
 cd dashboard
-cp .env.local.example .env.local       # edit with your program ID
+cp .env.example .env.local              # edit with your program ID
 yarn dev                               # opens http://localhost:3000
 
 # 6. Run the demo x402 server
 cd demo/server && yarn dev             # x402 merchant on :3001
 
-# 7. Run tests
+# 7. Run the demo Python agent
+cd demo/agent && pip install -e . && python -m src.agent
+
+# 8. Run tests
 anchor test
 ```
 
@@ -257,9 +260,16 @@ You can interact with the program directly using the IDL in [`target/idl/x402_wa
 │       ├── client.ts          # X402WardenClient class
 │       ├── pda.ts             # PDA derivation helpers
 │       ├── types.ts           # Account & param types
-│       └── constants.ts       # Seeds, defaults, reason codes
+│       ├── constants.ts       # Seeds, defaults, reason codes
+│       ├── idl.ts             # Program IDL
+│       └── index.ts           # Public re-exports
 ├── dashboard/                 # Next.js + shadcn/ui dashboard
 ├── demo/
+│   ├── agent/                 # Python demo agent
+│   │   └── src/
+│   │       ├── agent.py       # X402Agent — 3 demo scenarios
+│   │       ├── solana_helpers.py  # PDA derivation + instruction builders
+│   │       └── x402_client.py # x402 protocol helpers
 │   └── server/                # Express x402 demo merchant server
 │       └── src/
 │           ├── index.ts       # Server entry + health check
@@ -270,7 +280,8 @@ You can interact with the program directly using the IDL in [`target/idl/x402_wa
 ├── docs/                      # Deep documentation
 │   ├── architecture.md        # System deep-dive
 │   ├── sdk.md                 # SDK reference
-│   └── policies.md            # Policy configuration guide
+│   ├── policies.md            # Policy configuration guide
+│   └── demo.md                # E2E demo guide
 └── Anchor.toml                # Anchor config
 ```
 
