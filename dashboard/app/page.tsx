@@ -16,17 +16,17 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] opacity-40">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(1,245,242,0.12)_0%,_rgba(0,163,163,0.04)_40%,_transparent_70%)]" />
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] opacity-30">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(122,155,142,0.08)_0%,_rgba(74,101,96,0.03)_40%,_transparent_70%)]" />
       </div>
 
       <nav className="relative z-10 border-b border-warden-bone/15 px-6 py-4 flex items-center justify-between backdrop-blur-md bg-warden-black/80">
         <div className="flex items-center gap-2.5">
           <div className="relative">
-            <Shield className="h-7 w-7 text-warden-soul" />
-            <div className="absolute inset-0 blur-md bg-warden-soul/30 rounded-full animate-glow-pulse" />
+            <Shield className="h-7 w-7 text-warden-lichen" />
+            <div className="absolute inset-0 blur-md bg-warden-lichen/25 rounded-full" />
           </div>
-          <span className="font-display font-bold text-lg tracking-wider text-warden-soul text-glow-primary">
+          <span className="font-display font-bold text-lg tracking-wider text-warden-bone text-glow-primary">
             x402warden
           </span>
         </div>
@@ -35,8 +35,8 @@ export default function LandingPage() {
 
       <main className="flex-1 flex items-center justify-center relative z-10">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-2 rounded-full border border-warden-soul/20 bg-warden-soul/5 text-warden-soul text-sm font-mono font-medium mb-10 tracking-widest uppercase">
-            <Zap className="h-3.5 w-3.5" />
+          <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-2 rounded-full border border-warden-lichen/25 bg-warden-moss/15 text-warden-bone text-sm font-mono font-medium mb-10 tracking-widest uppercase">
+            <Zap className="h-3.5 w-3.5 text-warden-soul" />
             Solana x402 Protocol
           </div>
 
@@ -56,10 +56,10 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
-            <div className="animate-fade-in-up-2 group relative p-6 rounded-xl border border-warden-bone/30 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
-              <div className="relative h-11 w-11 rounded-lg bg-warden-soul/5 border border-warden-soul/20 flex items-center justify-center mb-4 transition-all duration-300">
-                <Lock className="h-5 w-5 text-warden-soul" />
-                <div className="absolute inset-0 blur-lg bg-warden-soul/0 group-hover:bg-warden-soul/15 rounded-lg transition-all duration-500" />
+            <div className="animate-fade-in-up-2 group relative p-6 rounded-xl border border-warden-bone-dark/40 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
+              <div className="relative h-11 w-11 rounded-lg bg-warden-lichen/8 border border-warden-lichen/20 flex items-center justify-center mb-4 transition-all duration-300">
+                <Lock className="h-5 w-5 text-warden-lichen" />
+                <div className="absolute inset-0 blur-lg bg-warden-lichen/0 group-hover:bg-warden-lichen/10 rounded-lg transition-all duration-500" />
               </div>
               <h3 className="font-display font-semibold text-sm tracking-wide mb-2">Spending Policies</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -67,10 +67,10 @@ export default function LandingPage() {
                 keep your AI agent under control.
               </p>
             </div>
-            <div className="animate-fade-in-up-3 group relative p-6 rounded-xl border border-warden-bone/30 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
-              <div className="relative h-11 w-11 rounded-lg bg-warden-heart/5 border border-warden-heart/20 flex items-center justify-center mb-4 transition-all duration-300">
-                <Fingerprint className="h-5 w-5 text-warden-heart" />
-                <div className="absolute inset-0 blur-lg bg-warden-heart/0 group-hover:bg-warden-heart/15 rounded-lg transition-all duration-500" />
+            <div className="animate-fade-in-up-3 group relative p-6 rounded-xl border border-warden-bone-dark/40 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
+              <div className="relative h-11 w-11 rounded-lg bg-warden-soul/5 border border-warden-soul/15 flex items-center justify-center mb-4 transition-all duration-300">
+                <Fingerprint className="h-5 w-5 text-warden-soul" />
+                <div className="absolute inset-0 blur-lg bg-warden-soul/0 group-hover:bg-warden-soul/10 rounded-lg transition-all duration-500" />
               </div>
               <h3 className="font-display font-semibold text-sm tracking-wide mb-2">Escrow Protection</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -78,10 +78,10 @@ export default function LandingPage() {
                 window before settlement.
               </p>
             </div>
-            <div className="animate-fade-in-up-4 group relative p-6 rounded-xl border border-warden-bone/30 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
-              <div className="relative h-11 w-11 rounded-lg bg-warden-soul-light/5 border border-warden-soul-light/20 flex items-center justify-center mb-4 transition-all duration-300">
-                <Hexagon className="h-5 w-5 text-warden-soul-light" />
-                <div className="absolute inset-0 blur-lg bg-warden-soul-light/0 group-hover:bg-warden-soul-light/15 rounded-lg transition-all duration-500" />
+            <div className="animate-fade-in-up-4 group relative p-6 rounded-xl border border-warden-bone-dark/40 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
+              <div className="relative h-11 w-11 rounded-lg bg-warden-moss/15 border border-warden-moss/25 flex items-center justify-center mb-4 transition-all duration-300">
+                <Hexagon className="h-5 w-5 text-warden-bone" />
+                <div className="absolute inset-0 blur-lg bg-warden-moss/0 group-hover:bg-warden-moss/10 rounded-lg transition-all duration-500" />
               </div>
               <h3 className="font-display font-semibold text-sm tracking-wide mb-2">Dispute Resolution</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">

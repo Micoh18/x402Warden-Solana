@@ -20,13 +20,13 @@ export default function AgentsLayout({ children }: { children: React.ReactNode }
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="relative border-b border-warden-bone/15 px-6 py-3.5 flex items-center justify-between sticky top-0 bg-warden-black/85 backdrop-blur-xl z-50">
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-warden-soul/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-warden-lichen/20 to-transparent" />
         <Link href="/agents" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
           <div className="relative">
-            <Shield className="h-5 w-5 text-warden-soul" />
-            <div className="absolute inset-0 blur-sm bg-warden-soul/20 rounded-full" />
+            <Shield className="h-5 w-5 text-warden-lichen" />
+            <div className="absolute inset-0 blur-sm bg-warden-lichen/15 rounded-full" />
           </div>
-          <span className="font-display font-bold tracking-wider text-sm text-warden-soul text-glow-primary">x402warden</span>
+          <span className="font-display font-bold tracking-wider text-sm text-warden-bone text-glow-primary">x402warden</span>
         </Link>
         <ConnectButton />
       </nav>
