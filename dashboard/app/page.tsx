@@ -1,18 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ConnectButton } from "@/components/wallet/ConnectButton";
 import { Shield, Zap, Lock, ArrowRight, Hexagon, Fingerprint } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
   const { connected } = useWallet();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (connected) router.push("/agents");
-  }, [connected, router]);
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -52,7 +47,16 @@ export default function LandingPage() {
           </p>
 
           <div className="animate-fade-in-up-3 flex flex-col sm:flex-row gap-4 justify-center mb-20">
-            <ConnectButton />
+            {connected ? (
+              <Link href="/agents">
+                <Button size="lg" className="gap-2">
+                  Go to Dashboard
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            ) : (
+              <ConnectButton />
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
