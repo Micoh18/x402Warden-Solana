@@ -25,6 +25,10 @@ pub mod x402_warden {
         instructions::set_policy::handler(ctx, params)
     }
 
+    pub fn create_allowlist(ctx: Context<CreateAllowlist>, page_index: u16) -> Result<()> {
+        instructions::create_allowlist::handler(ctx, page_index)
+    }
+
     pub fn add_merchant_to_allowlist(
         ctx: Context<AddMerchant>,
         merchant: Pubkey,

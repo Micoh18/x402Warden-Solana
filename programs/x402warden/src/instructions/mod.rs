@@ -1,5 +1,6 @@
 pub mod initialize_agent;
 pub mod set_policy;
+pub mod create_allowlist;
 pub mod add_merchant;
 pub mod remove_merchant;
 pub mod process_payment;
@@ -13,6 +14,7 @@ pub mod unpause;
 
 pub use initialize_agent::*;
 pub use set_policy::*;
+pub use create_allowlist::*;
 pub use add_merchant::*;
 pub use remove_merchant::*;
 pub use process_payment::*;
