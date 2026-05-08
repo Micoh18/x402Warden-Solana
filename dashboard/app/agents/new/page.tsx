@@ -76,13 +76,13 @@ export default function NewAgentPage() {
         <div className="animate-fade-in-up" style={{
           padding: "1px",
           borderRadius: "32px",
-          background: "linear-gradient(160deg, rgba(122, 155, 142, 0.15), rgba(10, 12, 11, 0.8)), linear-gradient(160deg, rgba(160, 181, 170, 0.08), rgba(160, 181, 170, 0.01))",
-          boxShadow: "rgba(0, 0, 0, 0.5) 0px 40px 80px -20px, rgba(122, 155, 142, 0.08) 0px 8px 16px -4px, rgba(160, 181, 170, 0.06) 0px 1px 0px 0px inset",
+          background: "linear-gradient(160deg, rgba(86, 255, 232, 0.15), rgba(86, 255, 232, 0.02) 40%, rgba(10, 12, 11, 0.6) 100%)",
+          boxShadow: "rgba(0, 0, 0, 0.6) 0px 40px 80px -20px, rgba(86, 255, 232, 0.1) 0px 0px 30px -5px, rgba(86, 255, 232, 0.05) 0px 1px 0px 0px inset",
         }}>
           <div style={{
             borderRadius: "31px",
-            background: "linear-gradient(160deg, rgba(12, 16, 21, 0.95) 0%, rgba(10, 49, 53, 0.3) 100%)",
-            backdropFilter: "blur(12px)",
+            background: "linear-gradient(160deg, rgba(12, 16, 21, 0.96) 0%, rgba(10, 49, 53, 0.35) 100%)",
+            backdropFilter: "blur(16px)",
           }}>
             <CardHeader className="p-8 pb-4">
               <div className="flex items-center gap-3 mb-3">

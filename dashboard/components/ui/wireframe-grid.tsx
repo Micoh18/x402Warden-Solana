@@ -66,9 +66,9 @@ export function WireframeGrid({ className = "" }: WireframeGridProps) {
     geometry.setIndex(indices);
 
     const material = new THREE.LineBasicMaterial({
-      color: new THREE.Color(0x7a9b8e),
+      color: new THREE.Color(0x56ffe8),
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.18,
     });
 
     const gridMesh = new THREE.LineSegments(geometry, material);
@@ -87,10 +87,10 @@ export function WireframeGrid({ className = "" }: WireframeGridProps) {
     pointsGeometry.setAttribute("position", new THREE.BufferAttribute(pointPositions, 3));
 
     const pointsMaterial = new THREE.PointsMaterial({
-      color: new THREE.Color(0xa0b5aa),
+      color: new THREE.Color(0x56ffe8),
       size: 0.06,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.3,
       sizeAttenuation: true,
     });
 
@@ -143,7 +143,7 @@ export function WireframeGrid({ className = "" }: WireframeGridProps) {
 
       points.rotation.y = time * 0.03;
 
-      const breath = Math.sin(time * 1.0) * 0.05 + 0.22;
+      const breath = Math.sin(time * 1.0) * 0.04 + 0.18;
       material.opacity = breath;
 
       renderer.render(scene, camera);
