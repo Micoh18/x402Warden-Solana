@@ -71,42 +71,44 @@ export default function LandingPage() {
         </div>
       </main>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[45vh] z-[2] pointer-events-none overflow-hidden">
-        <div className="absolute bottom-[-60%] left-1/2 -translate-x-1/2 w-[140vw] h-[80vh]">
-          <div className="absolute inset-0 rounded-[50%] border-2 opacity-40"
+      <div className="absolute bottom-0 left-0 right-0 h-[60vh] z-[2] pointer-events-none overflow-hidden">
+        <div className="absolute bottom-[-70%] left-1/2 -translate-x-1/2 w-[130vw] h-[90vh] rotate-[-2deg]">
+          <div className="absolute inset-0 rounded-[50%]"
             style={{
-              borderColor: "#56FFE8",
-              boxShadow: "0 0 30px rgba(86,255,232,0.15), inset 0 0 30px rgba(86,255,232,0.05)",
+              border: "2px solid #56FFE8",
+              boxShadow: "0 0 15px 2px rgba(86,255,232,0.4), 0 0 60px 5px rgba(86,255,232,0.15), inset 0 0 15px 2px rgba(86,255,232,0.1)",
+              filter: "blur(0.5px)",
             }} />
         </div>
 
-        <div className="absolute bottom-[-65%] left-1/2 -translate-x-1/2 w-[160vw] h-[85vh]">
-          <div className="absolute inset-0 rounded-[50%] border opacity-25"
+        <div className="absolute bottom-[-75%] left-1/2 -translate-x-1/2 w-[155vw] h-[95vh] rotate-[1deg]">
+          <div className="absolute inset-0 rounded-[50%]"
             style={{
-              borderColor: "#56FFE8",
-              boxShadow: "0 0 20px rgba(86,255,232,0.1)",
+              border: "1.5px solid rgba(86,255,232,0.6)",
+              boxShadow: "0 0 12px 1px rgba(86,255,232,0.3), 0 0 50px 3px rgba(86,255,232,0.1)",
+              filter: "blur(0.3px)",
             }} />
         </div>
 
-        <div className="absolute bottom-[-55%] left-1/2 -translate-x-1/2 w-[120vw] h-[70vh]">
-          <div className="absolute inset-0 rounded-[50%] border opacity-50"
+        <div className="absolute bottom-[-80%] left-1/2 -translate-x-1/2 w-[175vw] h-[100vh] rotate-[-1deg]">
+          <div className="absolute inset-0 rounded-[50%]"
             style={{
-              borderColor: "#56FFE8",
-              boxShadow: "0 0 40px rgba(86,255,232,0.2), inset 0 0 40px rgba(86,255,232,0.08)",
+              border: "1px solid rgba(86,255,232,0.35)",
+              boxShadow: "0 0 10px 1px rgba(86,255,232,0.2), 0 0 40px 2px rgba(86,255,232,0.06)",
             }} />
         </div>
 
-        <div className="absolute bottom-[-70%] left-1/2 -translate-x-1/2 w-[180vw] h-[90vh]">
-          <div className="absolute inset-0 rounded-[50%] border opacity-15"
+        <div className="absolute bottom-[-85%] left-1/2 -translate-x-1/2 w-[200vw] h-[110vh] rotate-[0.5deg]">
+          <div className="absolute inset-0 rounded-[50%]"
             style={{
-              borderColor: "#7A9B8E",
-              boxShadow: "0 0 15px rgba(122,155,142,0.08)",
+              border: "1px solid rgba(86,255,232,0.15)",
+              boxShadow: "0 0 8px rgba(86,255,232,0.08)",
             }} />
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 h-full"
           style={{
-            background: "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(86,255,232,0.04) 0%, transparent 60%)",
+            background: "radial-gradient(ellipse 80% 50% at 50% 100%, rgba(86,255,232,0.06) 0%, transparent 50%)",
           }} />
       </div>
 
