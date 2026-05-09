@@ -55,31 +55,35 @@ export default function NewAgentPage() {
   }
 
   return (
-    <div className="relative -m-6 min-h-[calc(100vh-60px)] flex flex-col items-center justify-center overflow-hidden">
-      <div className="absolute inset-[-50%] z-0">
-        <WireframeGrid />
-      </div>
+    <div className="max-w-3xl mx-auto">
+      <Link
+        href="/agents"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-all duration-200 mb-6 lumina-pill px-3 py-1.5"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to agents
+      </Link>
 
-      <div className="w-full max-w-lg relative z-10 px-6">
-        <Link
-          href="/agents"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-all duration-200 mb-8 lumina-pill px-3 py-1.5"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to agents
-        </Link>
+      <div className="animate-fade-in-up grid grid-cols-1 lg:grid-cols-2 gap-0" style={{
+        borderRadius: "32px",
+        overflow: "hidden",
+        border: "1px solid rgba(86, 255, 232, 0.1)",
+        boxShadow: "rgba(0, 0, 0, 0.6) 0px 40px 80px -20px, rgba(86, 255, 232, 0.08) 0px 0px 40px -10px",
+      }}>
+        <div className="relative h-[300px] lg:h-auto lg:min-h-[480px] overflow-hidden bg-warden-black">
+          <WireframeGrid />
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: "linear-gradient(to right, transparent 60%, rgba(12, 16, 21, 0.95) 100%)",
+          }} />
+          <div className="absolute inset-0 pointer-events-none lg:hidden" style={{
+            background: "linear-gradient(to bottom, transparent 50%, rgba(12, 16, 21, 0.95) 100%)",
+          }} />
+        </div>
 
-        <div className="animate-fade-in-up" style={{
-          padding: "1px",
-          borderRadius: "32px",
-          background: "linear-gradient(160deg, rgba(86, 255, 232, 0.15), rgba(86, 255, 232, 0.02) 40%, rgba(10, 12, 11, 0.6) 100%)",
-          boxShadow: "rgba(0, 0, 0, 0.6) 0px 40px 80px -20px, rgba(86, 255, 232, 0.1) 0px 0px 30px -5px, rgba(86, 255, 232, 0.05) 0px 1px 0px 0px inset",
+        <div style={{
+          background: "linear-gradient(160deg, rgba(12, 16, 21, 0.98) 0%, rgba(10, 49, 53, 0.3) 100%)",
+          backdropFilter: "blur(16px)",
         }}>
-          <div style={{
-            borderRadius: "31px",
-            background: "linear-gradient(160deg, rgba(12, 16, 21, 0.96) 0%, rgba(10, 49, 53, 0.35) 100%)",
-            backdropFilter: "blur(16px)",
-          }}>
             <CardHeader className="p-8 pb-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="relative h-11 w-11 rounded-xl bg-warden-lichen/8 border border-warden-lichen/20 flex items-center justify-center">
@@ -149,6 +153,5 @@ export default function NewAgentPage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
