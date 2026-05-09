@@ -186,11 +186,11 @@
 
 @keyframes orbital-breathe {
   0%, 100% {
-    transform: translateX(-50%) rotate(-2deg) scale(1);
+    transform: translateX(-50%) rotate(-1deg) scale(1);
     opacity: 1;
   }
   50% {
-    transform: translateX(-50%) rotate(-1.5deg) scale(1.02);
+    transform: translateX(-50%) rotate(-0.5deg) scale(1.015);
     opacity: 0.85;
   }
 }
