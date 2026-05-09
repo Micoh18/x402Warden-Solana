@@ -98,11 +98,31 @@ export default function LandingPage() {
             background: "radial-gradient(ellipse 60% 80% at 50% 100%, rgba(86,255,232,0.05) 0%, transparent 60%)",
           }} />
 
-        <div className="absolute bottom-0 left-0 right-0 h-full" style={{
-          animation: "light-sweep 4s ease-in-out infinite",
-          background: "radial-gradient(ellipse 15% 120% at 50% 100%, rgba(86,255,232,0.35) 0%, rgba(86,255,232,0.08) 30%, transparent 60%)",
-          mixBlendMode: "screen",
-        }} />
+        <div className="absolute" style={{
+          left: "50%",
+          top: "calc(100% + 22vh)",
+          transform: "translateX(-50%)",
+          animation: "orbital-breathe 6s ease-in-out infinite",
+        }}>
+          {[
+            { w: 1800, h: 600 },
+            { w: 2100, h: 700 },
+            { w: 2400, h: 800 },
+            { w: 2700, h: 900 },
+          ].map((ring, i) => (
+            <div key={`mask-${i}`} className="absolute rounded-[50%] overflow-hidden" style={{
+              width: `${ring.w}px`,
+              height: `${ring.h}px`,
+              left: `${-ring.w / 2}px`,
+              top: `${-ring.h / 2}px`,
+            }}>
+              <div className="absolute inset-0" style={{
+                background: "radial-gradient(ellipse 12% 100% at 50% 50%, rgba(86,255,232,0.6) 0%, transparent 50%)",
+                animation: `light-sweep 4s ease-in-out ${i * 0.15}s infinite`,
+              }} />
+            </div>
+          ))}
+        </div>
       </div>
 
       <footer className="relative z-10 px-6 py-6 flex flex-col items-center gap-2">
