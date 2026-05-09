@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="dashboard/public/logo.svg" width="80" height="80" alt="x402warden" />
+  <img src="dashboard/public/logo.svg" width="180" height="180" alt="x402warden" />
 </p>
 
 <h1 align="center">x402warden</h1>
