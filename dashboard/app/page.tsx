@@ -47,7 +47,7 @@ export default function LandingPage() {
 
           <p className="animate-fade-in-up-2 text-lg text-gray-400 font-medium mb-12 max-w-2xl mx-auto leading-7">
             Set spending policies, manage merchant allowlists, escrow every
-            payment, and resolve disputes — all on-chain with Solana x402.
+            payment, and resolve disputes. All on-chain with Solana x402.
           </p>
 
           <div className="animate-fade-in-up-3 flex justify-center mb-32">
