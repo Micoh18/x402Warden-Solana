@@ -71,9 +71,9 @@ export default function LandingPage() {
         </div>
       </main>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[40vh] z-[2] pointer-events-none overflow-hidden">
-        <div className="absolute"
-          style={{ bottom: "-130vh", left: "calc(50% - 15vw)", width: "200vw", height: "150vh", transform: "rotate(-4deg)" }}>
+      <div className="absolute bottom-0 left-0 right-0 h-[50vh] z-[2] pointer-events-none overflow-hidden">
+        <div className="absolute left-1/2"
+          style={{ bottom: "-85vh", transform: "translateX(-50%) rotate(-3deg)", width: "180vw", height: "100vh" }}>
           <div className="absolute inset-0 rounded-[50%]"
             style={{
               border: "2px solid #56FFE8",
@@ -81,8 +81,8 @@ export default function LandingPage() {
             }} />
         </div>
 
-        <div className="absolute"
-          style={{ bottom: "-138vh", left: "calc(50% - 20vw)", width: "220vw", height: "158vh", transform: "rotate(-3deg)" }}>
+        <div className="absolute left-1/2"
+          style={{ bottom: "-90vh", transform: "translateX(-52%) rotate(-2.5deg)", width: "190vw", height: "105vh" }}>
           <div className="absolute inset-0 rounded-[50%]"
             style={{
               border: "1.5px solid rgba(86,255,232,0.5)",
@@ -90,8 +90,8 @@ export default function LandingPage() {
             }} />
         </div>
 
-        <div className="absolute"
-          style={{ bottom: "-146vh", left: "calc(50% - 25vw)", width: "240vw", height: "166vh", transform: "rotate(-2deg)" }}>
+        <div className="absolute left-1/2"
+          style={{ bottom: "-95vh", transform: "translateX(-54%) rotate(-2deg)", width: "200vw", height: "110vh" }}>
           <div className="absolute inset-0 rounded-[50%]"
             style={{
               border: "1px solid rgba(86,255,232,0.3)",
@@ -99,8 +99,8 @@ export default function LandingPage() {
             }} />
         </div>
 
-        <div className="absolute"
-          style={{ bottom: "-154vh", left: "calc(50% - 30vw)", width: "260vw", height: "174vh", transform: "rotate(-1deg)" }}>
+        <div className="absolute left-1/2"
+          style={{ bottom: "-100vh", transform: "translateX(-56%) rotate(-1.5deg)", width: "210vw", height: "115vh" }}>
           <div className="absolute inset-0 rounded-[50%]"
             style={{
               border: "1px solid rgba(86,255,232,0.15)",
@@ -110,7 +110,7 @@ export default function LandingPage() {
 
         <div className="absolute bottom-0 left-0 right-0 h-full"
           style={{
-            background: "radial-gradient(ellipse 80% 70% at 40% 100%, rgba(86,255,232,0.05) 0%, transparent 50%)",
+            background: "radial-gradient(ellipse 80% 70% at 45% 100%, rgba(86,255,232,0.05) 0%, transparent 50%)",
           }} />
       </div>
 
