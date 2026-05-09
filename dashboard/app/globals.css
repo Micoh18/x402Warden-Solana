@@ -184,6 +184,17 @@
   100% { transform: translateY(100vh); }
 }
 
+@keyframes orbital-breathe {
+  0%, 100% {
+    transform: translateX(-50%) rotate(-2deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) rotate(-1.5deg) scale(1.02);
+    opacity: 0.85;
+  }
+}
+
 .animate-fade-in-up {
   animation: fade-in-up 0.5s ease-out both;
 }

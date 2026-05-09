@@ -72,8 +72,9 @@ export default function LandingPage() {
       <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
         <div className="absolute" style={{
           left: "50%",
-          top: "calc(100% + 30vh)",
+          top: "calc(100% + 15vh)",
           transform: "translateX(-50%) rotate(-2deg)",
+          animation: "orbital-breathe 6s ease-in-out infinite",
         }}>
           {[
             { w: 1400, h: 700, border: "2px solid #56FFE8", shadow: "0 0 15px 2px rgba(86,255,232,0.5), 0 0 60px 5px rgba(86,255,232,0.15), inset 0 0 15px 2px rgba(86,255,232,0.08)" },
