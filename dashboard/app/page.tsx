@@ -166,227 +166,143 @@ export default function LandingPage() {
 
       {/* ── Integrate ── */}
       <section id="integrate" className="relative z-10 py-24 px-6 border-t border-white/5">
-        <div className="max-w-3xl mx-auto space-y-20">
+        <div className="max-w-5xl mx-auto space-y-16">
 
           <div className="text-center">
-            <h2 className="text-3xl font-semibold text-white mb-4">Integrate with Your Agent</h2>
+            <span className="text-xs font-semibold text-warden-soul-light uppercase tracking-wider">Developer Experience</span>
+            <h2 className="text-4xl font-semibold text-white mt-3 mb-4">Integrate in 3 Steps</h2>
             <p className="text-lg text-gray-400 max-w-xl mx-auto">
               Works with any AI agent, any language, any framework.
-              A <strong className="text-white">CLI</strong> your agent calls directly,
-              or an <strong className="text-white">HTTP Proxy</strong> that handles payments transparently.
             </p>
           </div>
 
-          {/* Prerequisites */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-white">Prerequisites</h3>
-            <p className="text-gray-400">Before integrating, you need a funded Solana wallet on devnet.</p>
-            <ol className="list-decimal list-inside space-y-3 text-gray-300">
-              <li>
-                <strong className="text-white">SOL for transaction fees</strong> &mdash; Get free devnet SOL
-                at <a href="https://faucet.solana.com" target="_blank" className="text-warden-soul-light hover:underline">faucet.solana.com</a>
-              </li>
-              <li>
-                <strong className="text-white">USDC for payments</strong> &mdash; Get free devnet USDC
-                at <a href="https://faucet.circle.com" target="_blank" className="text-warden-soul-light hover:underline">faucet.circle.com</a> (select Solana Devnet)
-              </li>
-            </ol>
-            <InfoBox label="What is a USDC Token Account?">
-              On Solana, tokens like USDC live in separate &quot;token accounts&quot; associated with your wallet.
-              When you request USDC from the Circle faucet, it automatically creates this account for you.
-              Your wallet address holds SOL; the token account holds USDC. x402warden needs to know
-              both to manage payments on your behalf.
-            </InfoBox>
+          {/* Steps 1-2-3 */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                step: "01",
+                title: "Fund Your Wallet",
+                desc: "Get free devnet SOL and USDC from Solana and Circle faucets.",
+                icon: "dollar",
+                code: "solana airdrop 2",
+              },
+              {
+                step: "02",
+                title: "Create Agent Account",
+                desc: "Deploy an on-chain smart account that enforces your spending rules.",
+                icon: "shield",
+                code: "npx x402warden init --agent-id 0",
+              },
+              {
+                step: "03",
+                title: "Set Spending Policies",
+                desc: "Define per-call limits, daily caps, merchant allowlists, and dispute windows.",
+                icon: "settings",
+                code: "npx x402warden policy --max-per-call 5000000",
+              },
+            ].map((s) => (
+              <div key={s.step} className="group relative rounded-xl border border-white/[0.06] bg-white/[0.02] p-6 hover:border-warden-soul-light/20 transition-all duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-warden-soul-light/10 text-warden-soul-light text-xs font-bold font-mono">
+                    {s.step}
+                  </span>
+                  <SolarIcon name={s.icon} size={18} className="text-gray-500 group-hover:text-warden-soul-light transition-colors" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-2">{s.title}</h3>
+                <p className="text-sm text-gray-400 mb-4 leading-relaxed">{s.desc}</p>
+                <div className="rounded-md bg-black/50 border border-white/[0.06] px-3 py-2 font-mono text-xs text-gray-400 overflow-x-auto">
+                  <span className="text-warden-soul-light/60">$</span> {s.code}
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Step 1 */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-white">Step 1 &mdash; Create Your Agent Account</h3>
-            <p className="text-gray-400">
-              An agent account is an on-chain smart account that enforces your spending rules.
-            </p>
-            <CodeBlock title="Terminal">
-{`# Check your balances and find your USDC token account address
-npx x402warden balance
-
-# Create agent account (agent-id 0 is your first agent)
-npx x402warden init --agent-id 0 --usdc-account <YOUR_USDC_TOKEN_ACCOUNT>`}
-            </CodeBlock>
-            <p className="text-sm text-gray-500">
-              The <code className="text-gray-300">balance</code> command shows your USDC token account address.
-              Copy it and use it in the <code className="text-gray-300">init</code> command.
-            </p>
-          </div>
-
-          {/* Step 2 */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-white">Step 2 &mdash; Set Spending Policies</h3>
-            <p className="text-gray-400">
-              Define how much your agent can spend. All amounts are in
-              USDC micro-units (1 USDC = 1,000,000 micro-units).
-            </p>
-            <CodeBlock title="Terminal">
-{`npx x402warden policy \\
-  --max-per-call 5000000 \\
-  --max-per-period 50000000 \\
-  --period-seconds 86400 \\
-  --dispute-window 300`}
-            </CodeBlock>
-            <InfoBox label="What do the numbers mean?">
-              <ul className="space-y-2 mt-1">
-                <li><code className="text-warden-soul-light">--max-per-call 5000000</code> = max 5 USDC per individual payment</li>
-                <li><code className="text-warden-soul-light">--max-per-period 50000000</code> = max 50 USDC total per period</li>
-                <li><code className="text-warden-soul-light">--period-seconds 86400</code> = period resets every 24 hours (86,400 seconds)</li>
-                <li><code className="text-warden-soul-light">--dispute-window 300</code> = 5-minute window (300 seconds) to dispute a payment before it settles</li>
-              </ul>
-            </InfoBox>
-          </div>
-
-          {/* Path A: CLI */}
+          {/* Two Integration Paths */}
           <div className="space-y-6">
-            <div>
-              <span className="text-xs font-semibold text-warden-soul-light uppercase tracking-wider">Integration Path A</span>
-              <h3 className="text-xl font-semibold text-white mt-1">CLI &mdash; Direct Command</h3>
-              <p className="text-gray-400 mt-2">
-                Your agent calls <code className="text-gray-300">x402warden pay</code> as a subprocess.
-                It handles the entire x402 flow and returns JSON to stdout.
-              </p>
+            <h3 className="text-2xl font-semibold text-white text-center">Choose Your Integration Path</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+
+              {/* Path A: CLI */}
+              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden hover:border-warden-soul-light/20 transition-all duration-300">
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-warden-soul-light/10">
+                      <SolarIcon name="hash" size={20} className="text-warden-soul-light" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-semibold text-warden-soul-light uppercase tracking-wider">Path A</span>
+                      <h4 className="text-base font-semibold text-white">CLI &mdash; Direct Command</h4>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    Your agent calls <code className="text-gray-300 bg-white/5 px-1 rounded">x402warden pay</code> as a subprocess.
+                    Returns JSON to stdout, parseable by any language.
+                  </p>
+                </div>
+                <div className="border-t border-white/[0.06]">
+                  <pre className="p-4 overflow-x-auto text-xs font-mono text-gray-400 bg-black/30">
+<code><span className="text-warden-soul-light/60">$</span> npx x402warden pay https://api.example.com/research{"\n"}
+<span className="text-gray-600">{"{"}</span>{"\n"}
+{"  "}<span className="text-warden-soul-light">&quot;status&quot;</span>: <span className="text-green-400">&quot;paid&quot;</span>,{"\n"}
+{"  "}<span className="text-warden-soul-light">&quot;txSignature&quot;</span>: <span className="text-green-400">&quot;4fW...ABCD&quot;</span>,{"\n"}
+{"  "}<span className="text-warden-soul-light">&quot;amountPaid&quot;</span>: <span className="text-amber-400">5000000</span>,{"\n"}
+{"  "}<span className="text-warden-soul-light">&quot;body&quot;</span>: {"{ ... }"}{"\n"}
+<span className="text-gray-600">{"}"}</span></code>
+                  </pre>
+                </div>
+                <div className="px-6 pb-5 pt-3 flex flex-wrap gap-2">
+                  {["Python", "Node.js", "Rust", "Go"].map((lang) => (
+                    <span key={lang} className="text-[10px] px-2 py-0.5 rounded-full border border-white/10 text-gray-500">{lang}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Path B: Proxy */}
+              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden hover:border-warden-soul-light/20 transition-all duration-300">
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-warden-soul-light/10">
+                      <SolarIcon name="shield" size={20} className="text-warden-soul-light" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-semibold text-warden-soul-light uppercase tracking-wider">Path B</span>
+                      <h4 className="text-base font-semibold text-white">HTTP Proxy &mdash; Zero Changes</h4>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    Start a local proxy. Your agent&apos;s HTTP requests go through it.
+                    402 payments are handled automatically &mdash; your agent doesn&apos;t know it&apos;s paying.
+                  </p>
+                </div>
+                <div className="border-t border-white/[0.06]">
+                  <pre className="p-4 overflow-x-auto text-xs font-mono text-gray-400 bg-black/30">
+<code><span className="text-gray-500"># Start the proxy</span>{"\n"}
+<span className="text-warden-soul-light/60">$</span> npx x402warden-proxy --port 4020{"\n"}
+{"\n"}
+<span className="text-gray-500"># Your agent code — no changes needed</span>{"\n"}
+<span className="text-amber-400">client</span> = httpx.Client(<span className="text-warden-soul-light">proxy</span>=<span className="text-green-400">&quot;http://localhost:4020&quot;</span>){"\n"}
+response = client.get(<span className="text-green-400">&quot;http://api.example.com/data&quot;</span>)</code>
+                  </pre>
+                </div>
+                <div className="px-6 pb-5 pt-3 flex flex-wrap gap-2">
+                  {["curl", "httpx", "fetch", "any HTTP client"].map((lang) => (
+                    <span key={lang} className="text-[10px] px-2 py-0.5 rounded-full border border-white/10 text-gray-500">{lang}</span>
+                  ))}
+                </div>
+              </div>
+
             </div>
-
-            <CodeBlock title="Terminal">
-{`# Simple GET request to a paywalled service
-npx x402warden pay https://api.example.com/research
-
-# POST with body and headers
-npx x402warden pay https://api.example.com/analyze \\
-  --method POST \\
-  --body '{"query": "Solana TVL trends"}' \\
-  --headers '{"Content-Type": "application/json"}'
-
-# Cap the max you're willing to pay (in micro-USDC)
-npx x402warden pay https://api.example.com/data --max-amount 10000000`}
-            </CodeBlock>
-
-            <p className="text-gray-400 text-sm">Response (JSON to stdout, parseable by any language):</p>
-            <CodeBlock title="stdout">
-{`{
-  "status": "paid",
-  "statusCode": 200,
-  "txSignature": "4fW...ABCD",
-  "amountPaid": 5000000,
-  "body": { "data": "..." }
-}`}
-            </CodeBlock>
-
-            <div className="space-y-3">
-              <p className="text-sm font-medium text-white">Call from any language:</p>
-              <CodeBlock title="Python">
-{`import subprocess, json
-
-result = subprocess.run(
-    ["npx", "x402warden", "pay", "https://api.example.com/research"],
-    capture_output=True, text=True
-)
-data = json.loads(result.stdout)
-print(data["body"])`}
-              </CodeBlock>
-              <CodeBlock title="Node.js">
-{`import { execSync } from "child_process";
-
-const result = JSON.parse(
-  execSync("npx x402warden pay https://api.example.com/research").toString()
-);
-console.log(result.body);`}
-              </CodeBlock>
-            </div>
-
-            <InfoBox label="Exit codes">
-              <ul className="space-y-1 mt-1">
-                <li><code className="text-warden-soul-light">0</code> &mdash; Success (payment made or no payment needed)</li>
-                <li><code className="text-warden-soul-light">1</code> &mdash; Payment blocked by your spending policy</li>
-                <li><code className="text-warden-soul-light">2</code> &mdash; Error (network, config, insufficient funds)</li>
-              </ul>
-            </InfoBox>
           </div>
 
-          {/* Path B: Proxy */}
-          <div className="space-y-6">
-            <div>
-              <span className="text-xs font-semibold text-warden-soul-light uppercase tracking-wider">Integration Path B</span>
-              <h3 className="text-xl font-semibold text-white mt-1">HTTP Proxy &mdash; Zero Code Changes</h3>
-              <p className="text-gray-400 mt-2">
-                Start a local proxy. Point your agent&apos;s HTTP client to it.
-                The proxy intercepts 402 responses, pays on-chain, and retries automatically.
-                Your agent doesn&apos;t know it&apos;s paying.
-              </p>
-            </div>
-
-            <CodeBlock title="Terminal 1 &mdash; Start proxy">
-{`npx x402warden-proxy --port 4020`}
-            </CodeBlock>
-
-            <CodeBlock title="Terminal 2 &mdash; Use it">
-{`# Any HTTP request through the proxy gets x402 protection
-curl -x http://localhost:4020 http://api.example.com/research
-
-# Or set the env var so all requests go through it
-HTTP_PROXY=http://localhost:4020 curl http://api.example.com/data`}
-            </CodeBlock>
-
-            <div className="space-y-3">
-              <p className="text-sm font-medium text-white">From your agent code:</p>
-              <CodeBlock title="Python (httpx)">
-{`import httpx
-
-client = httpx.Client(proxy="http://localhost:4020")
-response = client.get("http://api.example.com/research")
-print(response.json())  # Payment handled transparently`}
-              </CodeBlock>
-            </div>
-
-            <InfoBox label="HTTPS targets">
-              For HTTPS services, send your request to <code className="text-warden-soul-light">http://localhost:4020</code> with
-              a <code className="text-warden-soul-light">X-TARGET-URL</code> header pointing to the real endpoint.
-            </InfoBox>
-          </div>
-
-          {/* Config */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-white">Configuration</h3>
-            <p className="text-gray-400">Both CLI and Proxy read from environment variables:</p>
-            <div className="overflow-x-auto rounded-lg border border-white/10">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-white/10 bg-white/5">
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Variable</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Default</th>
-                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Description</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-300">
-                  <tr className="border-b border-white/5">
-                    <td className="py-3 px-4 font-mono text-xs text-warden-soul-light">SOLANA_KEYPAIR_PATH</td>
-                    <td className="py-3 px-4 font-mono text-xs">~/.config/solana/id.json</td>
-                    <td className="py-3 px-4 text-xs">Path to your Solana keypair</td>
-                  </tr>
-                  <tr className="border-b border-white/5">
-                    <td className="py-3 px-4 font-mono text-xs text-warden-soul-light">SOLANA_RPC_URL</td>
-                    <td className="py-3 px-4 font-mono text-xs">devnet</td>
-                    <td className="py-3 px-4 text-xs">Solana RPC endpoint</td>
-                  </tr>
-                  <tr className="border-b border-white/5">
-                    <td className="py-3 px-4 font-mono text-xs text-warden-soul-light">AGENT_ID</td>
-                    <td className="py-3 px-4 font-mono text-xs">0</td>
-                    <td className="py-3 px-4 text-xs">Which agent account to use</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 px-4 font-mono text-xs text-warden-soul-light">USDC_MINT</td>
-                    <td className="py-3 px-4 font-mono text-xs">devnet USDC</td>
-                    <td className="py-3 px-4 text-xs">USDC token mint address</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          {/* CTA */}
+          <div className="text-center pt-4">
+            <Link href="/integrate">
+              <button className="inline-flex items-center gap-2 px-8 py-3 text-sm font-medium rounded-full text-white transition-all duration-200 hover:shadow-[0_0_20px_rgba(86,255,232,0.2)]"
+                style={{ border: "1px solid rgba(86, 255, 232, 0.25)", background: "rgba(86, 255, 232, 0.05)" }}>
+                View Full Integration Guide
+                <SolarIcon name="arrow-right" size={16} />
+              </button>
+            </Link>
           </div>
 
         </div>
