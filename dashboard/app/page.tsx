@@ -69,46 +69,32 @@ export default function LandingPage() {
         </div>
       </main>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[50vh] z-[2] pointer-events-none overflow-hidden">
-        <div className="absolute left-1/2"
-          style={{ bottom: "-85vh", transform: "translateX(-50%) rotate(-3deg)", width: "180vw", height: "100vh" }}>
-          <div className="absolute inset-0 rounded-[50%]"
-            style={{
-              border: "2px solid #56FFE8",
-              boxShadow: "0 0 15px 2px rgba(86,255,232,0.5), 0 0 60px 5px rgba(86,255,232,0.15), inset 0 0 15px 2px rgba(86,255,232,0.08)",
+      <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
+        <div className="absolute" style={{
+          left: "50%",
+          top: "calc(100% + 30vh)",
+          transform: "translateX(-50%) rotate(-2deg)",
+        }}>
+          {[
+            { w: 1400, h: 700, border: "2px solid #56FFE8", shadow: "0 0 15px 2px rgba(86,255,232,0.5), 0 0 60px 5px rgba(86,255,232,0.15), inset 0 0 15px 2px rgba(86,255,232,0.08)" },
+            { w: 1600, h: 800, border: "1.5px solid rgba(86,255,232,0.5)", shadow: "0 0 12px 1px rgba(86,255,232,0.35), 0 0 50px 3px rgba(86,255,232,0.1)" },
+            { w: 1800, h: 900, border: "1px solid rgba(86,255,232,0.3)", shadow: "0 0 10px 1px rgba(86,255,232,0.15)" },
+            { w: 2000, h: 1000, border: "1px solid rgba(86,255,232,0.15)", shadow: "0 0 8px rgba(86,255,232,0.06)" },
+          ].map((ring, i) => (
+            <div key={i} className="absolute rounded-[50%]" style={{
+              width: `${ring.w}px`,
+              height: `${ring.h}px`,
+              left: `${-ring.w / 2}px`,
+              top: `${-ring.h / 2}px`,
+              border: ring.border,
+              boxShadow: ring.shadow,
             }} />
+          ))}
         </div>
 
-        <div className="absolute left-1/2"
-          style={{ bottom: "-90vh", transform: "translateX(-52%) rotate(-2.5deg)", width: "190vw", height: "105vh" }}>
-          <div className="absolute inset-0 rounded-[50%]"
-            style={{
-              border: "1.5px solid rgba(86,255,232,0.5)",
-              boxShadow: "0 0 12px 1px rgba(86,255,232,0.35), 0 0 50px 3px rgba(86,255,232,0.1)",
-            }} />
-        </div>
-
-        <div className="absolute left-1/2"
-          style={{ bottom: "-95vh", transform: "translateX(-54%) rotate(-2deg)", width: "200vw", height: "110vh" }}>
-          <div className="absolute inset-0 rounded-[50%]"
-            style={{
-              border: "1px solid rgba(86,255,232,0.3)",
-              boxShadow: "0 0 10px 1px rgba(86,255,232,0.15)",
-            }} />
-        </div>
-
-        <div className="absolute left-1/2"
-          style={{ bottom: "-100vh", transform: "translateX(-56%) rotate(-1.5deg)", width: "210vw", height: "115vh" }}>
-          <div className="absolute inset-0 rounded-[50%]"
-            style={{
-              border: "1px solid rgba(86,255,232,0.15)",
-              boxShadow: "0 0 8px rgba(86,255,232,0.06)",
-            }} />
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-full"
+        <div className="absolute bottom-0 left-0 right-0 h-[30vh]"
           style={{
-            background: "radial-gradient(ellipse 80% 70% at 45% 100%, rgba(86,255,232,0.05) 0%, transparent 50%)",
+            background: "radial-gradient(ellipse 60% 80% at 50% 100%, rgba(86,255,232,0.05) 0%, transparent 60%)",
           }} />
       </div>
 
