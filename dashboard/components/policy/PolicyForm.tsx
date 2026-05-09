@@ -12,7 +12,7 @@ import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import type { PolicyAccount } from "@x402warden/sdk";
 import { bnToNumber } from "@/lib/utils";
-import { Loader2, Save } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 interface PolicyFormProps {
   agentPda: PublicKey;
@@ -130,9 +130,9 @@ export function PolicyForm({ agentPda, policy }: PolicyFormProps) {
 
           <Button type="submit" disabled={loading || !client} className="w-full">
             {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              <SolarIcon name="loader" size={16} className="animate-spin mr-2" />
             ) : (
-              <Save className="h-4 w-4 mr-2" />
+              <SolarIcon name="save" size={16} className="mr-2" />
             )}
             Save Policy
           </Button>

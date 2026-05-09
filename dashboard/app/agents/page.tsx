@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AgentCard } from "@/components/agent/AgentCard";
 import { useAgents } from "@/hooks/useAgents";
-import { Plus, Loader2, Shield } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 export default function AgentsPage() {
   const { data: agents, isLoading, error } = useAgents();
@@ -18,7 +18,7 @@ export default function AgentsPage() {
         </div>
         <Link href="/agents/new">
           <Button>
-            <Plus className="h-4 w-4 mr-2" />
+            <SolarIcon name="plus" size={16} />
             Create Agent
           </Button>
         </Link>
@@ -27,7 +27,7 @@ export default function AgentsPage() {
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
           <div className="relative">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <SolarIcon name="loader" size={32} className="animate-spin text-primary" />
             <div className="absolute inset-0 blur-lg bg-primary/20 rounded-full animate-glow-pulse" />
           </div>
           <span className="text-xs font-mono text-muted-foreground tracking-widest uppercase">Loading agents</span>
@@ -44,7 +44,7 @@ export default function AgentsPage() {
       {!isLoading && !error && agents && agents.length === 0 && (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <div className="relative h-20 w-20 rounded-2xl bg-warden-lichen/5 border border-warden-lichen/20 flex items-center justify-center mb-6 glow-primary">
-            <Shield className="h-9 w-9 text-warden-lichen" />
+            <SolarIcon name="shield" size={36} className="text-warden-lichen" />
             <div className="absolute inset-0 blur-xl bg-warden-lichen/8 rounded-2xl animate-glow-pulse" />
           </div>
           <h2 className="text-xl font-display font-semibold mb-2 tracking-tight">No agents yet</h2>
@@ -53,7 +53,7 @@ export default function AgentsPage() {
           </p>
           <Link href="/agents/new">
             <Button>
-              <Plus className="h-4 w-4 mr-2" />
+              <SolarIcon name="plus" size={16} />
               Create Your First Agent
             </Button>
           </Link>

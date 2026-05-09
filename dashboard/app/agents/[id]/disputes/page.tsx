@@ -7,7 +7,7 @@ import { PublicKey } from "@solana/web3.js";
 import { usePayments } from "@/hooks/usePayments";
 import { useDisputes } from "@/hooks/useDisputes";
 import { DisputeCard } from "@/components/dispute/DisputeCard";
-import { ArrowLeft, Loader2, ShieldOff } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 export default function DisputesPage() {
   const params = useParams();
@@ -23,7 +23,7 @@ export default function DisputesPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Link href={`/agents/${agentPdaStr}`} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-5 w-5" />
+          <SolarIcon name="arrow-left" size={20} />
         </Link>
         <div>
           <h1 className="text-2xl font-bold">Disputes</h1>
@@ -35,14 +35,14 @@ export default function DisputesPage() {
 
       {isLoading && (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <SolarIcon name="loader" size={32} className="animate-spin text-primary" />
         </div>
       )}
 
       {!isLoading && (!disputes || disputes.length === 0) && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
-            <ShieldOff className="h-8 w-8 text-muted-foreground" />
+            <SolarIcon name="shield-off" size={32} className="text-muted-foreground" />
           </div>
           <h2 className="text-xl font-semibold mb-2">No disputes</h2>
           <p className="text-muted-foreground">

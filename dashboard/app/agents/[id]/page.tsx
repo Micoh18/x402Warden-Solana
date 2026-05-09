@@ -18,15 +18,7 @@ import {
   bnToNumber,
   shortenAddress,
 } from "@/lib/utils";
-import {
-  ArrowLeft,
-  Loader2,
-  Settings,
-  CreditCard,
-  AlertTriangle,
-  Pause,
-  Play,
-} from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -69,7 +61,7 @@ export default function AgentDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <SolarIcon name="loader" size={32} className="animate-spin text-primary" />
       </div>
     );
   }
@@ -93,7 +85,7 @@ export default function AgentDetailPage() {
       <div className="flex items-center justify-between animate-fade-in-up">
         <div className="flex items-center gap-4">
           <Link href="/agents" className="text-muted-foreground hover:text-primary transition-colors">
-            <ArrowLeft className="h-5 w-5" />
+            <SolarIcon name="arrow-left" size={20} />
           </Link>
           <div>
             <div className="flex items-center gap-3">
@@ -118,20 +110,20 @@ export default function AgentDetailPage() {
             disabled={pauseLoading}
           >
             {pauseLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <SolarIcon name="loader" size={16} className="animate-spin" />
             ) : agent.paused ? (
               <>
-                <Play className="h-4 w-4 mr-1" /> Unpause
+                <SolarIcon name="play" size={16} /> Unpause
               </>
             ) : (
               <>
-                <Pause className="h-4 w-4 mr-1" /> Pause
+                <SolarIcon name="pause" size={16} /> Pause
               </>
             )}
           </Button>
           <Link href={`/agents/${agentPdaStr}/settings`}>
             <Button variant="outline" size="sm">
-              <Settings className="h-4 w-4 mr-1" /> Settings
+              <SolarIcon name="settings" size={16} /> Settings
             </Button>
           </Link>
         </div>
@@ -187,12 +179,12 @@ export default function AgentDetailPage() {
             <div className="flex gap-2">
               <Link href={`/agents/${agentPdaStr}/payments`}>
                 <Button variant="ghost" size="sm">
-                  <CreditCard className="h-4 w-4 mr-1" /> View All
+                  <SolarIcon name="credit-card" size={16} /> View All
                 </Button>
               </Link>
               <Link href={`/agents/${agentPdaStr}/disputes`}>
                 <Button variant="ghost" size="sm">
-                  <AlertTriangle className="h-4 w-4 mr-1" /> Disputes
+                  <SolarIcon name="alert-triangle" size={16} /> Disputes
                 </Button>
               </Link>
             </div>

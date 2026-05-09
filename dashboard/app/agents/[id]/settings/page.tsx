@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { findAllowlistAccountPda } from "@x402warden/sdk";
 import type { MerchantEntry } from "@x402warden/sdk";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Loader2, Plus, Trash2, Users } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 import { shortenAddress, lamportsToUsdc } from "@/lib/utils";
 import { getMerchantName, setMerchantName as saveMerchantName, removeMerchantName } from "@/lib/merchant-names";
 
@@ -116,7 +116,7 @@ export default function SettingsPage() {
   if (isLoading || !data) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <SolarIcon name="loader" size={32} className="animate-spin text-primary" />
       </div>
     );
   }
@@ -127,7 +127,7 @@ export default function SettingsPage() {
         href={`/agents/${agentPdaStr}`}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <SolarIcon name="arrow-left" size={16} />
         Back to agent
       </Link>
 
@@ -138,14 +138,14 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-sm tracking-widest uppercase flex items-center gap-2">
-            <Users className="h-4 w-4" />
+            <SolarIcon name="users" size={16} />
             Current Allowlist ({merchants.length} merchants)
           </CardTitle>
         </CardHeader>
         <CardContent>
           {merchantsLoading ? (
             <div className="flex justify-center py-4">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <SolarIcon name="loader" size={20} className="animate-spin text-muted-foreground" />
             </div>
           ) : merchants.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">No merchants in allowlist yet.</p>
@@ -227,9 +227,9 @@ export default function SettingsPage() {
             )}
             <Button type="submit" disabled={merchantLoading || !merchantAddr} className="w-full">
               {merchantLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <SolarIcon name="loader" size={16} className="animate-spin mr-2" />
               ) : (
-                <Plus className="h-4 w-4 mr-2" />
+                <SolarIcon name="plus" size={16} className="mr-2" />
               )}
               Add Merchant
             </Button>
@@ -254,9 +254,9 @@ export default function SettingsPage() {
             </div>
             <Button type="submit" variant="destructive" disabled={removeLoading || !removeAddr} className="w-full">
               {removeLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <SolarIcon name="loader" size={16} className="animate-spin mr-2" />
               ) : (
-                <Trash2 className="h-4 w-4 mr-2" />
+                <SolarIcon name="trash" size={16} className="mr-2" />
               )}
               Remove Merchant
             </Button>

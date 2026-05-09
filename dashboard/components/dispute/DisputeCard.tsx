@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { shortenAddress, formatTimestamp, getDisputeStateKey, bnToNumber } from "@/lib/utils";
 import type { DisputeWithPda } from "@/hooks/useDisputes";
 import { REASON_NO_RESPONSE, REASON_BAD_RESPONSE, REASON_TIMEOUT, REASON_OTHER } from "@x402warden/sdk";
-import { Clock, FileWarning, User } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 function reasonLabel(code: number): string {
   switch (code) {
@@ -75,7 +75,7 @@ export function DisputeCard({ dispute }: DisputeCardProps) {
     <Card className="border-l-4 border-l-destructive/50">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
-          <FileWarning className="h-5 w-5 text-destructive" />
+          <SolarIcon name="file-warning" size={20} className="text-destructive" />
           <CardTitle className="text-base">
             Dispute
           </CardTitle>
@@ -107,11 +107,11 @@ export function DisputeCard({ dispute }: DisputeCardProps) {
 
         <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t">
           <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+            <SolarIcon name="clock" size={12} />
             Opened: {formatTimestamp(account.openedAt)}
           </div>
           <div className="flex items-center gap-1">
-            <User className="h-3 w-3" />
+            <SolarIcon name="user" size={12} />
             Opener: {shortenAddress(account.opener.toBase58())}
           </div>
         </div>

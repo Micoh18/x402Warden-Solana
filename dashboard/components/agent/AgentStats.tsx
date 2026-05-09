@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { lamportsToUsdc, bnToNumber } from "@/lib/utils";
 import type { AgentAccount, PolicyAccount } from "@x402warden/sdk";
-import { DollarSign, AlertTriangle, Hash, Clock } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 interface AgentStatsProps {
   agent: AgentAccount;
@@ -15,7 +15,7 @@ export function AgentStats({ agent, policy }: AgentStatsProps) {
     {
       label: "Total Spent",
       value: `$${lamportsToUsdc(agent.totalSpentLifetime)}`,
-      icon: DollarSign,
+      iconName: "dollar",
       color: "text-warden-lichen",
       bgColor: "bg-warden-lichen/8",
       borderColor: "border-warden-lichen/15",
@@ -23,7 +23,7 @@ export function AgentStats({ agent, policy }: AgentStatsProps) {
     {
       label: "Total Disputed",
       value: `$${lamportsToUsdc(agent.totalDisputedLifetime)}`,
-      icon: AlertTriangle,
+      iconName: "alert-triangle",
       color: "text-warden-soul",
       bgColor: "bg-warden-soul/5",
       borderColor: "border-warden-soul/10",
@@ -31,7 +31,7 @@ export function AgentStats({ agent, policy }: AgentStatsProps) {
     {
       label: "Payment Count",
       value: bnToNumber(agent.paymentCount).toString(),
-      icon: Hash,
+      iconName: "hash",
       color: "text-warden-bone",
       bgColor: "bg-warden-bone/6",
       borderColor: "border-warden-bone/12",
@@ -39,7 +39,7 @@ export function AgentStats({ agent, policy }: AgentStatsProps) {
     {
       label: "Dispute Window",
       value: `${policy.disputeWindowSeconds}s`,
-      icon: Clock,
+      iconName: "clock",
       color: "text-warden-moss",
       bgColor: "bg-warden-moss/10",
       borderColor: "border-warden-moss/15",
@@ -53,7 +53,7 @@ export function AgentStats({ agent, policy }: AgentStatsProps) {
           <CardContent className="p-5">
             <div className="flex items-center gap-4">
               <div className={`relative h-11 w-11 rounded-lg ${s.bgColor} border ${s.borderColor} flex items-center justify-center`}>
-                <s.icon className={`h-5 w-5 ${s.color}`} />
+                <SolarIcon name={s.iconName} size={20} className={s.color} />
               </div>
               <div>
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">{s.label}</p>

@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { ConnectButton } from "@/components/wallet/ConnectButton";
 import { ParticleField } from "@/components/ui/particle-field";
 import Image from "next/image";
-import { ArrowRight, ArrowDown } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 export default function LandingPage() {
   const { connected } = useWallet();
@@ -58,7 +58,7 @@ export default function LandingPage() {
                     background: "#0A3135",
                     border: "1px solid rgba(86, 255, 232, 0.35)",
                   }}>
-                  <ArrowDown className="h-4 w-4" />
+                  <SolarIcon name="arrow-down" size={16} />
                   Go to Dashboard
                 </button>
               </Link>
@@ -129,7 +129,7 @@ export default function LandingPage() {
 
       <footer className="relative z-10 px-6 py-6 flex flex-col items-center gap-2">
         <span className="text-xs text-gray-500 tracking-wide">Scroll to Explore</span>
-        <ArrowDown className="h-4 w-4 text-gray-600 animate-bounce" />
+        <SolarIcon name="arrow-down" size={16} className="text-gray-600 animate-bounce" />
       </footer>
     </div>
   );

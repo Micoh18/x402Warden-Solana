@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import { findAgentAccountPda, findPolicyAccountPda } from "@x402warden/sdk";
-import { ArrowLeft, Loader2, Plus, Shield } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 import Link from "next/link";
 
 const WireframeGrid = dynamic(
@@ -60,7 +60,7 @@ export default function NewAgentPage() {
         href="/agents"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-all duration-200 mb-6 lumina-pill px-3 py-1.5"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <SolarIcon name="arrow-left" size={16} />
         Back to agents
       </Link>
 
@@ -87,7 +87,7 @@ export default function NewAgentPage() {
             <CardHeader className="p-8 pb-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="relative h-11 w-11 rounded-xl bg-warden-lichen/8 border border-warden-lichen/20 flex items-center justify-center">
-                  <Shield className="h-5 w-5 text-warden-lichen" />
+                  <SolarIcon name="shield" size={20} className="text-warden-lichen" />
                   <div className="absolute inset-0 blur-md bg-warden-lichen/5 rounded-xl" />
                 </div>
                 <div>
@@ -142,9 +142,9 @@ export default function NewAgentPage() {
                   className="w-full rounded-full h-12 text-base"
                 >
                   {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <SolarIcon name="loader" size={16} className="animate-spin mr-2" />
                   ) : (
-                    <Plus className="h-4 w-4 mr-2" />
+                    <SolarIcon name="plus" size={16} className="mr-2" />
                   )}
                   Create Agent
                 </Button>

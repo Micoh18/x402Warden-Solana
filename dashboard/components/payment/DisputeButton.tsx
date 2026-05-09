@@ -6,7 +6,7 @@ import { useProgram } from "@/hooks/useProgram";
 import { useQueryClient } from "@tanstack/react-query";
 import { PublicKey } from "@solana/web3.js";
 import { REASON_BAD_RESPONSE } from "@x402warden/sdk";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 interface DisputeButtonProps {
   agentPda: PublicKey;
@@ -41,9 +41,9 @@ export function DisputeButton({ agentPda, escrowPda }: DisputeButtonProps) {
       disabled={loading || !client}
     >
       {loading ? (
-        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+        <SolarIcon name="loader" size={12} className="animate-spin mr-1" />
       ) : (
-        <AlertTriangle className="h-3 w-3 mr-1" />
+        <SolarIcon name="alert-triangle" size={12} className="mr-1" />
       )}
       Dispute
     </Button>

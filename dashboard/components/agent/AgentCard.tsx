@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { lamportsToUsdc, bnToNumber } from "@/lib/utils";
 import type { AgentWithPda } from "@/hooks/useAgents";
-import { Shield, DollarSign, Hash, Pause, ChevronRight } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 interface AgentCardProps {
   agent: AgentWithPda;
@@ -22,7 +22,7 @@ export function AgentCard({ agent }: AgentCardProps) {
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="flex items-center gap-3">
             <div className="relative h-10 w-10 rounded-lg bg-warden-lichen/8 border border-warden-lichen/20 flex items-center justify-center group-hover:border-warden-lichen/35 transition-all duration-300">
-              <Shield className="h-5 w-5 text-warden-lichen" />
+              <SolarIcon name="shield" size={20} className="text-warden-lichen" />
               <div className="absolute inset-0 blur-md bg-warden-lichen/0 group-hover:bg-warden-lichen/8 rounded-lg transition-all duration-300" />
             </div>
             <div>
@@ -35,33 +35,33 @@ export function AgentCard({ agent }: AgentCardProps) {
           <div className="flex items-center gap-2">
             {account.paused ? (
               <Badge variant="warning" className="flex items-center gap-1">
-                <Pause className="h-3 w-3" /> Paused
+                <SolarIcon name="pause" size={12} /> Paused
               </Badge>
             ) : (
               <Badge variant="success">Active</Badge>
             )}
-            <ChevronRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
+            <SolarIcon name="chevron-right" size={16} className="text-muted-foreground/40 group-hover:text-primary transition-all duration-200" />
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4 mt-2 pt-3 border-t border-border/50">
             <div>
               <div className="flex items-center gap-1.5 mb-1">
-                <DollarSign className="h-3 w-3 text-warden-lichen/70" />
+                <SolarIcon name="dollar" size={12} className="text-warden-lichen/70" />
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Spent</p>
               </div>
               <p className="text-sm font-mono font-semibold">${lamportsToUsdc(account.totalSpentLifetime)}</p>
             </div>
             <div>
               <div className="flex items-center gap-1.5 mb-1">
-                <Hash className="h-3 w-3 text-warden-bone/60" />
+                <SolarIcon name="hash" size={12} className="text-warden-bone/60" />
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Txns</p>
               </div>
               <p className="text-sm font-mono font-semibold">{bnToNumber(account.paymentCount)}</p>
             </div>
             <div>
               <div className="flex items-center gap-1.5 mb-1">
-                <Shield className="h-3 w-3 text-warden-moss/70" />
+                <SolarIcon name="alert-triangle" size={12} className="text-warden-moss/70" />
                 <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">Disputes</p>
               </div>
               <p className="text-sm font-mono font-semibold">${lamportsToUsdc(account.totalDisputedLifetime)}</p>

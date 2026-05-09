@@ -7,7 +7,7 @@ import { PublicKey } from "@solana/web3.js";
 import { usePayments } from "@/hooks/usePayments";
 import { PaymentTable } from "@/components/payment/PaymentTable";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { SolarIcon } from "@/components/ui/icon";
 
 export default function PaymentsPage() {
   const params = useParams();
@@ -22,7 +22,7 @@ export default function PaymentsPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Link href={`/agents/${agentPdaStr}`} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-5 w-5" />
+          <SolarIcon name="arrow-left" size={20} />
         </Link>
         <div>
           <h1 className="text-2xl font-bold">Payments</h1>
@@ -41,7 +41,7 @@ export default function PaymentsPage() {
         <CardContent>
           {isLoading ? (
             <div className="flex items-center justify-center py-10">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              <SolarIcon name="loader" size={24} className="animate-spin text-primary" />
             </div>
           ) : (
             <PaymentTable payments={payments || []} agentPda={agentPda!} />
