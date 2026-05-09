@@ -73,7 +73,7 @@ export default function LandingPage() {
         <div className="absolute" style={{
           left: "50%",
           top: "calc(100% + 22vh)",
-          transform: "translateX(-50%) rotate(-1deg)",
+          transform: "translateX(-50%)",
           animation: "orbital-breathe 6s ease-in-out infinite",
         }}>
           {[
