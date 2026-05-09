@@ -1,151 +1,80 @@
-# x402Warden
+<p align="center">
+  <img src="dashboard/public/logo.svg" width="80" height="80" alt="x402warden" />
+</p>
 
-> The security smart account for AI agents paying x402 services on Solana.
-> Set spending policies before payment. Get refunds when services fail.
+<h1 align="center">x402warden</h1>
 
-[![Build](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![Devnet](https://img.shields.io/badge/devnet-deployed-blue)]()
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Solana](https://img.shields.io/badge/solana-anchor%200.31-9945FF)]()
-[![x402](https://img.shields.io/badge/x402-compatible-green)]()
+<p align="center">
+  <strong>The security smart account for AI agents paying x402 services on Solana.</strong><br/>
+  Set spending policies. Escrow every payment. Get refunds when services fail.
+</p>
 
-[**Demo Video** (3 min)](#) · [**Live Demo** (devnet)](#) · [**Architecture**](docs/architecture.md) · [**Twitter**](#)
+<p align="center">
+  <a href="https://x402-warden-solana-dashboard.vercel.app"><img src="https://img.shields.io/badge/dashboard-live-56FFE8?style=flat-square" alt="Dashboard" /></a>
+  <a href="https://explorer.solana.com/address/9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A?cluster=devnet"><img src="https://img.shields.io/badge/devnet-deployed-9945FF?style=flat-square" alt="Devnet" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License" /></a>
+  <img src="https://img.shields.io/badge/anchor-0.31-orange?style=flat-square" alt="Anchor" />
+  <img src="https://img.shields.io/badge/x402-compatible-green?style=flat-square" alt="x402" />
+</p>
+
+<p align="center">
+  <a href="https://x402-warden-solana-dashboard.vercel.app">Live Dashboard</a> · 
+  <a href="docs/architecture.md">Architecture</a> · 
+  <a href="#quick-start">Quick Start</a> · 
+  <a href="#integrate-with-your-agent">Integration Guide</a>
+</p>
 
 ---
 
-## TL;DR
+## The Problem
 
 When an AI agent pays an x402 service today, you lose money in two ways:
 
-1. **A buggy or compromised agent drains your wallet** — there's no spending limit, no domain allowlist, no rate limiting.
-2. **A failed service keeps your money** — once payment is sent, there's no refund mechanism if the service returns garbage or doesn't deliver.
+1. **A buggy agent drains your wallet** — no spending limits, no allowlist, no rate limiting
+2. **A failed service keeps your money** — no refund mechanism if it returns garbage
 
-**x402warden** solves both. It's a smart account on Solana where you define spending policies that gate every payment, and a **5-minute dispute window** that lets you recover funds when services fail.
+Every existing player (MCPay, Latinum, Kora, Crossmint) solves the **merchant side**. Nobody protects the **buyer**.
 
-Built on top of the [Solana SPL Token Program](https://spl.solana.com/token) for composability — we don't reinvent token transfers, we add the security layer on top.
+## The Solution
+
+**x402warden** is an on-chain smart account that sits between your agent and every payment:
+
+```
+Your Agent → x402warden (policy check + escrow) → Merchant Service
+                  ↓
+         Payment blocked? → Agent gets clear error
+         Service failed?  → Open dispute → Get refund
+```
+
+- **Pre-pay**: per-call limits, period budgets, merchant allowlists
+- **Post-pay**: 5-minute escrow window, dispute resolution, auto-refund
 
 ---
 
-## Why This Matters
+## Verified on Devnet
 
-The x402 protocol on Solana already moved **35M+ transactions and over $10M in volume** since launch. AI agents are paying for inference, datasets, MCP tools, and increasingly, agents are paying other agents. This is real, growing, and irreversible.
+The full flow has been tested end-to-end on Solana devnet with real USDC:
 
-But every existing player solves the **merchant side**: how do I charge for my service? MCPay, Latinum, PayAI, Kora, Crossmint x402 — all serve the recipient.
+```bash
+$ x402warden balance
+{"sol":"4.38","usdc":"20","usdcAccount":"3A1yf1X6tjqk52h2ZMdxG1ybAQvqZsLAKCi2MkQajooD"}
 
-**Nobody is building the buyer side.** When your agent has a budget, you have no enforcement primitive. When your agent gets ripped off, you have no recourse. You're trusting raw HTTP transactions with money flowing automatically.
+$ x402warden init --agent-id 0 --usdc-account 3A1yf1X6...
+{"status":"ok","txSignature":"5hTDW2N1zsb...","agentPda":"2Afgp3eWPN..."}
 
-Production deployments of agents are blocked on this gap. Companies that want to put autonomous agents in front of real money are building one-off security wrappers themselves, or they're not deploying at all.
+$ x402warden policy --max-per-call 5000000 --max-per-period 50000000
+{"status":"ok","txSignature":"3Cx12vQNay6..."}
 
-**x402warden** is the missing piece: a **composable, on-chain, programmable security layer** for any agent paying x402 on Solana. Drop in our SDK, set policies once, and your agent is protected from both itself and from bad merchants.
-
----
-
-## How It Works
-
-### The 60-Second Mental Model
-
-```
-+-------------------------------------------------------------+
-|                                                               |
-|   YOU set policies once    ->    AGENT pays through us        |
-|   (max/call, allowlist,          (every x402 payment is       |
-|    dispute window)                filtered, then escrowed)    |
-|                                                               |
-|                  |                          |                 |
-|                  v                          v                 |
-|                                                               |
-|         Bad payment blocked        Service fails ->           |
-|         (over budget, etc.)        you open dispute ->        |
-|                                    money comes back           |
-|                                                               |
-+-------------------------------------------------------------+
+$ x402warden pay http://localhost:3001/api/research
+{"status":"paid","txSignature":"5y3nmKt3HME...","amountPaid":5000000,"body":{"report":"Solana DeFi Market Analysis"}}
 ```
 
-### The Full Flow
-
-1. **Setup (once).** As an agent owner, you create an `AgentAccount` on-chain. You set policies: max USDC per call, max per period, dispute window length. You add merchants you trust to an allowlist.
-
-2. **Runtime (every payment).** Your agent uses our SDK to make x402 requests. The SDK intercepts the HTTP 402 response, validates the payment against your on-chain policies, and only proceeds if all checks pass.
-
-3. **Escrow window.** Approved payments don't go to the merchant immediately. They sit in a per-payment escrow PDA for 5 minutes (configurable). The merchant can see the payment is committed but can't withdraw yet.
-
-4. **Settlement or dispute.** If 5 minutes pass and nobody disputes, anyone can call `settle_payment` to release funds to the merchant. If you (or the agent itself, programmatically) detect the service failed, you call `open_dispute` and funds are locked pending resolution.
-
-5. **Resolution.** The merchant has 24 hours to accept the dispute (refund) or contest it. If they don't respond, funds auto-refund to you.
-
----
-
-## Architecture
-
-### System Diagram
-
-```
-+-------------------------------------------------------------+
-|                       AGENT OWNER                             |
-|              (you, the dev configuring policies)              |
-+-----------------------------+-------------------------------+
-                              | TX: setPolicy, addMerchant
-                              v
-+-------------------------------------------------------------+
-|                       DASHBOARD                               |
-|              (Next.js + Solana Wallet Adapter)                |
-+-----------------------------+-------------------------------+
-                              | TX
-                              v
-+-------------------------------------------------------------+
-|              x402warden PROGRAM (Rust / Anchor)               |
-|                                                               |
-|   Pre-pay                 |       Post-pay                    |
-|   ---------               |       --------                    |
-|   - AgentAccount          |       - PaymentEscrow (per-pay)   |
-|   - PolicyAccount         |       - DisputeAccount            |
-|   - MerchantAllowlist     |       - Auto-refund logic         |
-|                           |                                   |
-+-----------------------------+-------------------------------+
-                              | SPL Token Transfers
-                              v
-+-------------------------------------------------------------+
-|              SPL Token Program (USDC)                         |
-|              Standard token transfer primitive                |
-+-------------------------------------------------------------+
-
-
--------- RUNTIME (every x402 payment by your agent) --------
-
-+-----------+   HTTP 402   +------------------+
-|   AGENT   |------------->|  x402 SERVICE    |
-|  (Python  |              |  (MCP, API...)   |
-|   /Node)  |<---payment---|                  |
-+-----+-----+  requirements+------------------+
-      |                            ^
-      | Sign payment via SDK       | Forwarded
-      v                            | payment
-+----------------------------+     |
-| x402warden SDK (TypeScript)|-----+
-| - intercepts 402           |
-| - validates policies       |
-| - escrows funds            |
-| - retries with payment     |
-+----------------------------+
-```
-
-### What's On-Chain (5 PDA Account Types)
-
-| Account | Seeds | Purpose |
-|---|---|---|
-| **`AgentAccount`** | `["agent", owner, agent_id]` | Owner reference, pause state, USDC token account, payment counter |
-| **`PolicyAccount`** | `["policy", agent]` | Spending limits (per-call, per-period), allowlist toggle, dispute window, period tracking |
-| **`MerchantAllowlistAccount`** | `["allowlist", agent, page_index]` | Paginated list of approved merchants with optional per-merchant overrides |
-| **`PaymentEscrow`** | `["payment", agent, payment_id]` | Per-payment ephemeral account that holds USDC during dispute window |
-| **`DisputeAccount`** | `["dispute", payment_escrow]` | Dispute state machine with merchant response deadline |
-
-### What's Off-Chain
-
-- **TypeScript SDK** — Drop into your agent code. Handles the full x402 dance + on-chain calls
-- **Dashboard** — Configure policies, view payments, manage disputes, audit trail
-- **Demo agent + server** — Reference implementation showing three demo scenarios
-
-For full architecture details, instruction reference, and account schemas, see [docs/architecture.md](docs/architecture.md).
+| Detail | Value |
+|---|---|
+| **Program ID** | [`9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A`](https://explorer.solana.com/address/9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A?cluster=devnet) |
+| **Cluster** | Solana Devnet |
+| **USDC Mint** | `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` |
+| **Dashboard** | [x402-warden-solana-dashboard.vercel.app](https://x402-warden-solana-dashboard.vercel.app) |
 
 ---
 
@@ -153,234 +82,218 @@ For full architecture details, instruction reference, and account schemas, see [
 
 ### Prerequisites
 
-- [Solana CLI](https://docs.solanalabs.com/cli/install) 1.18+
-- [Anchor](https://www.anchor-lang.com/docs/installation) 0.31+ via avm
-- Node 20+ and Yarn
-- A Phantom or Solflare wallet on devnet
+- [Solana CLI](https://docs.solanalabs.com/cli/install) 1.18+ &nbsp;·&nbsp; [Anchor](https://www.anchor-lang.com/docs/installation) 0.31+ &nbsp;·&nbsp; Node 20+ &nbsp;·&nbsp; Phantom or Solflare wallet on devnet
 
-### Run Locally
+### Install & Run
 
 ```bash
-# 1. Clone
 git clone https://github.com/Micoh18/x402Warden-Solana.git
 cd x402Warden-Solana
 
-# 2. Install dependencies
-yarn install
+npm install --legacy-peer-deps    # install all workspaces
+anchor build                       # build the Solana program
+anchor deploy --provider.cluster devnet
 
-# 3. Build the Anchor program
-anchor build
+# Dashboard
+cd dashboard && cp .env.example .env.local && npm run dev
 
-# 4. Deploy to localnet or devnet
-anchor deploy                          # localnet (default)
-anchor deploy --provider.cluster devnet  # devnet
+# Demo x402 server
+cd demo/server && npm run dev      # merchant on :3001
 
-# 5. Run the dashboard
-cd dashboard
-cp .env.example .env.local              # edit with your program ID
-yarn dev                               # opens http://localhost:3000
-
-# 6. Run the demo x402 server
-cd demo/server && yarn dev             # x402 merchant on :3001
-
-# 7. Run the demo Python agent
-cd demo/agent && pip install -e . && python -m src.agent
-
-# 8. Run tests
+# Tests
 anchor test
-```
-
-### Use the SDK in Your Own Agent
-
-```typescript
-import { X402WardenClient } from "@x402warden/sdk";
-import { Connection, PublicKey } from "@solana/web3.js";
-
-const client = new X402WardenClient({
-  connection: new Connection("https://api.devnet.solana.com"),
-  wallet: myWalletAdapter,
-});
-
-// One-time setup
-const tx1 = await client.createAgent(0, usdcTokenAccount, agentPda, policyPda);
-
-await client.setPolicy(agentPda, {
-  maxPerCall: new BN(5_000_000),       // 5 USDC
-  maxPerPeriod: new BN(50_000_000),    // 50 USDC/day
-  periodSeconds: new BN(86400),
-  disputeWindowSeconds: 300,
-  allowlistEnabled: true,
-  autoSettleEnabled: true,
-});
-
-await client.addMerchant(agentPda, allowlistPda, trustedMerchant, 0, 0);
-
-// Process an x402 payment
-await client.processPayment(
-  agentPda,
-  new BN(5_000_000),
-  merchantPubkey,
-  requestHash,
-  userTokenAccount,
-  usdcMint
-);
-
-// Open dispute if the service failed
-await client.openDispute(agentPda, escrowPda, 1, reasonUriBytes);
 ```
 
 ---
 
-## Devnet Deployment
+## Integrate with Your Agent
 
-| Item | Value |
-|---|---|
-| **Program ID** | `9utfdXa7dRRyNKpqeD7EzB3q2SSrfC7gBGWzD62pUs3A` |
-| **Cluster** | `devnet` |
-| **USDC mint (devnet)** | `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` |
-| **Live dashboard** | [x402warden.vercel.app](#) |
+x402warden works with **any AI agent, any language, any framework**. Two paths:
 
-You can interact with the program directly using the IDL in [`target/idl/x402_warden.json`](target/idl/x402_warden.json) or via the TypeScript SDK.
+### Path A — CLI (your agent calls a command)
+
+```bash
+# 1. Check your wallet
+npx x402warden balance
+
+# 2. Create an agent account on-chain
+npx x402warden init --agent-id 0 --usdc-account <YOUR_USDC_TOKEN_ACCOUNT>
+
+# 3. Set spending limits
+npx x402warden policy \
+  --max-per-call 5000000 \       # max 5 USDC per payment
+  --max-per-period 50000000 \    # max 50 USDC per 24h
+  --period-seconds 86400 \       # reset period = 24 hours
+  --dispute-window 300           # 5-min dispute window
+
+# 4. Pay any x402 service
+npx x402warden pay https://api.example.com/research
+```
+
+**Use from any language:**
+
+```python
+# Python
+import subprocess, json
+result = subprocess.run(
+    ["npx", "x402warden", "pay", "https://api.example.com/research"],
+    capture_output=True, text=True
+)
+data = json.loads(result.stdout)
+print(data["body"])  # The actual API response
+```
+
+```javascript
+// Node.js
+import { execSync } from "child_process";
+const result = JSON.parse(
+  execSync("npx x402warden pay https://api.example.com/research").toString()
+);
+console.log(result.body);
+```
+
+**Exit codes:** `0` success · `1` blocked by policy · `2` error
+
+### Path B — HTTP Proxy (zero code changes)
+
+```bash
+# Start the proxy
+npx x402warden-proxy --port 4020
+
+# Your agent just uses it — payments happen transparently
+curl -x http://localhost:4020 http://api.example.com/research
+HTTP_PROXY=http://localhost:4020 python my_agent.py
+```
+
+```python
+import httpx
+client = httpx.Client(proxy="http://localhost:4020")
+response = client.get("http://api.example.com/research")
+print(response.json())  # x402warden handled the payment
+```
+
+### Configuration
+
+Both CLI and Proxy read from environment variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `SOLANA_KEYPAIR_PATH` | `~/.config/solana/id.json` | Path to Solana keypair |
+| `SOLANA_RPC_URL` | Devnet | Solana RPC endpoint |
+| `AGENT_ID` | `0` | Which agent account to use |
+| `USDC_MINT` | Devnet USDC | USDC token mint address |
+
+> **What is a USDC Token Account?** On Solana, tokens live in separate "token accounts" linked to your wallet. Get free devnet USDC at [faucet.circle.com](https://faucet.circle.com) — it creates the account automatically. The `balance` command shows its address.
+
+---
+
+## How It Works
+
+```
+1. Agent requests a service
+2. Service returns HTTP 402 with price + merchant address
+3. x402warden checks spending policy on-chain
+4. If allowed → USDC moves to escrow (not directly to merchant)
+5. Request retried with payment proof → service responds with data
+6. 5-min dispute window → get refund if service failed
+7. After window → funds released to merchant
+```
+
+---
+
+## Architecture
+
+```
+AGENT OWNER (you)
+      │ setPolicy, addMerchant
+      ▼
+┌─────────────────────────────────────────────┐
+│           x402warden Program (Rust)          │
+│                                              │
+│  Pre-pay              │  Post-pay            │
+│  ────────             │  ────────            │
+│  AgentAccount         │  PaymentEscrow       │
+│  PolicyAccount        │  DisputeAccount      │
+│  MerchantAllowlist    │  Auto-refund         │
+└──────────────────────┬──────────────────────┘
+                       │ SPL Token transfers
+                       ▼
+              USDC on Solana Devnet
+```
+
+### On-Chain Accounts (5 PDAs)
+
+| Account | Seeds | Purpose |
+|---|---|---|
+| `AgentAccount` | `["agent", owner, id]` | Owner, pause state, payment counter |
+| `PolicyAccount` | `["policy", agent]` | Limits, period tracking, dispute window |
+| `MerchantAllowlistAccount` | `["allowlist", agent, page]` | Approved merchants with overrides |
+| `PaymentEscrow` | `["payment", agent, id]` | Holds USDC during dispute window |
+| `DisputeAccount` | `["dispute", escrow]` | Dispute state + merchant deadline |
+
+### Program Instructions (13)
+
+`initialize_agent` · `set_policy` · `create_allowlist` · `add_merchant` · `remove_merchant` · `process_payment` · `settle_payment` · `open_dispute` · `merchant_accept` · `merchant_contest` · `auto_refund` · `pause` · `unpause`
+
+For the full reference, see [docs/architecture.md](docs/architecture.md).
 
 ---
 
 ## Project Structure
 
 ```
-.
-├── programs/x402warden/       # Rust program (Anchor 0.31)
-│   └── src/
-│       ├── lib.rs             # Entry point — 12 instructions
-│       ├── state/             # Account structs (5 PDAs)
-│       ├── instructions/      # Instruction handlers
-│       ├── errors.rs          # 16 custom error codes
-│       └── events.rs          # 10 on-chain events
-├── sdk/                       # TypeScript SDK
-│   └── src/
-│       ├── client.ts          # X402WardenClient class
-│       ├── pda.ts             # PDA derivation helpers
-│       ├── types.ts           # Account & param types
-│       ├── constants.ts       # Seeds, defaults, reason codes
-│       ├── idl.ts             # Program IDL
-│       └── index.ts           # Public re-exports
-├── dashboard/                 # Next.js + shadcn/ui dashboard
+x402Warden-Solana/
+├── programs/x402warden/    # Anchor program (Rust) — 13 instructions, 5 accounts
+├── sdk/                    # TypeScript SDK — client, PDA helpers, types
+├── cli/                    # CLI tool — x402warden pay/init/policy/status/balance
+├── proxy/                  # HTTP proxy — transparent x402 payment interception
+├── dashboard/              # Next.js dashboard — agent management UI
 ├── demo/
-│   ├── agent/                 # Python demo agent
-│   │   └── src/
-│   │       ├── agent.py       # X402Agent — 3 demo scenarios
-│   │       ├── solana_helpers.py  # PDA derivation + instruction builders
-│   │       └── x402_client.py # x402 protocol helpers
-│   └── server/                # Express x402 demo merchant server
-│       └── src/
-│           ├── index.ts       # Server entry + health check
-│           ├── routes/api.ts  # Paywalled endpoints (/research, /broken)
-│           └── middleware/    # x402 paywall middleware
-├── tests/                     # Anchor integration tests
-├── scripts/                   # Deploy + utility scripts
-├── docs/                      # Deep documentation
-│   ├── architecture.md        # System deep-dive
-│   ├── sdk.md                 # SDK reference
-│   ├── policies.md            # Policy configuration guide
-│   └── demo.md                # E2E demo guide
-└── Anchor.toml                # Anchor config
+│   ├── server/             # Express x402 merchant (paywalled endpoints)
+│   └── agent/              # Python demo agent (3 scenarios)
+├── tests/                  # Anchor integration tests (9 files)
+├── docs/                   # Architecture, SDK, policies, demo guides
+└── scripts/                # Deploy + utility scripts
 ```
 
 ---
 
 ## Differentiation
 
-We're often asked: "isn't this just MCPay/Latinum?" Short answer: no, we're complementary.
-
 | | MCPay / Latinum | Kora / PayAI | **x402warden** |
 |---|---|---|---|
-| **Side served** | Merchant | Settlement infra | **Buyer (agent owner)** |
-| **Helps with charging** | Yes | Yes | No (not the goal) |
-| **Spending limits** | No | No | **Yes** |
-| **Merchant allowlist** | No | No | **Yes** |
-| **Dispute / refund** | No | No | **Yes** |
-| **Emergency pause** | No | No | **Yes** |
-| **Composes with others** | n/a | n/a | **Yes** — pays *to* MCPay servers |
-
-A correctly-built agent uses **all of these together**: x402-native servers (MCPay), gas abstraction (Kora), and security layer (x402warden).
-
----
-
-## Built With
-
-- **[Solana](https://solana.com)** — The chain
-- **[Anchor](https://anchor-lang.com)** — Rust framework for Solana programs
-- **[SPL Token](https://spl.solana.com/token)** — USDC token transfer primitive
-- **[x402](https://x402.org)** — HTTP 402 payment protocol
-- **[Next.js](https://nextjs.org)** + **[shadcn/ui](https://ui.shadcn.com)** — Dashboard
-- **[Tailwind CSS](https://tailwindcss.com)** — Styling
+| **Side** | Merchant | Settlement | **Buyer** |
+| **Spending limits** | — | — | Per-call + per-period |
+| **Merchant allowlist** | — | — | On-chain, paginated |
+| **Dispute / refund** | — | — | 5-min escrow + auto-refund |
+| **Emergency pause** | — | — | Instant kill switch |
+| **Composes with others** | — | — | Pays *to* MCPay servers |
 
 ---
 
 ## Roadmap
 
-### v0.x (hackathon submission)
-- [x] Core Rust program with 12 instructions — policy engine + dispute system
-- [x] TypeScript SDK with full client + PDA helpers
-- [x] Dashboard with agent lifecycle management
-- [x] Demo x402 merchant server with paywalled endpoints
-- [x] Devnet deployment
+**v0.x** &nbsp; Core program · SDK · CLI · Proxy · Dashboard · Devnet deploy · E2E verified
 
-### v0.next (post-hackathon)
-- [ ] Stake-based dispute juries (Kleros-light)
-- [ ] Token-2022 support for confidential transfers
-- [ ] Native Python SDK
-- [ ] Mainnet deployment with audited release
-- [ ] Integration guides for MCPay, Latinum, Kora
-
-### v1.0 (vision)
-- [ ] Multi-sig override for enterprise (large payments require human approval)
-- [ ] Webhook integrations for ops alerts
-- [ ] Per-category spending budgets
-- [ ] Reputation graph for merchants (Solana Attestation Service)
-- [ ] Cross-chain extension (EVM x402 with Solana settlement)
+**v1.0** &nbsp; Mainnet audit · Stake-based dispute juries · Token-2022 · Python SDK · Multi-sig enterprise overrides · Webhook alerts · Merchant reputation graph
 
 ---
+
+## Built With
+
+[Solana](https://solana.com) · [Anchor](https://anchor-lang.com) · [x402](https://x402.org) · [Next.js](https://nextjs.org) · [shadcn/ui](https://ui.shadcn.com) · [Tailwind](https://tailwindcss.com)
 
 ## Team
 
-Built solo by [@Micoh18](https://github.com/Micoh18) from Santiago, Chile, for the dev3pack Global Hackathon Kickoff.
-
-The core insight: every existing player on Solana x402 is solving for the merchant. Nobody was solving for the autonomous agent that needs to spend safely. So we built it.
-
----
-
-## Contributing
-
-This project is open-source under MIT license. Issues, PRs, and questions are welcome. Open an issue first for anything substantial so we can align before you put work in.
-
-If you're integrating x402warden into your own agent or x402 service, reach out — we want to know who's using it.
-
----
-
-## Security
-
-**This is hackathon-grade software deployed only on devnet. Do not use with mainnet funds.**
-
-A formal audit and bug bounty program is on the roadmap before any mainnet release. If you find a security issue, please open a private issue instead of a public one.
-
----
+Built by [@Micoh18](https://github.com/Micoh18) from Santiago, Chile for the dev3pack Global Hackathon.
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
-
----
-
-## Acknowledgments
-
-- The Coinbase x402 team for the HTTP 402 payment standard
-- Solana Foundation for the SPL ecosystem
-- The dev3pack and Superteam Chile community
-- Built with assistance from [Claude Code](https://claude.ai/code)
+[MIT](LICENSE)
 
 ---
 
 <p align="center">
-  <em>Cloudflare + Stripe Disputes for AI agents on Solana.</em><br/>
-  <em>Made with coffee in Santiago, Chile.</em>
+  <img src="dashboard/public/logo.svg" width="32" height="32" alt="" /><br/>
+  <em>Cloudflare + Stripe Disputes for AI agents on Solana.</em>
 </p>
