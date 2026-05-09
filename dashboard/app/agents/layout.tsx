@@ -22,7 +22,7 @@ export default function AgentsLayout({ children }: { children: React.ReactNode }
       <nav className="relative px-6 py-3.5 flex items-center justify-between sticky top-0 lumina-header z-50">
         <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
           <Image src="/logo.svg" alt="x402warden" width={24} height={24} />
-          <span className="font-display font-bold tracking-wider text-sm text-warden-bone text-glow-primary">x402warden</span>
+          <span className="text-base font-normal text-white">x402warden</span>
         </Link>
         <ConnectButton />
       </nav>
