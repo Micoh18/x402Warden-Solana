@@ -1,7 +1,7 @@
 {
   "name": "x402warden-monorepo",
   "private": true,
-  "workspaces": ["sdk", "dashboard", "demo/server"],
+  "workspaces": ["sdk", "dashboard", "demo/server", "cli", "proxy"],
   "scripts": {
     "build": "yarn workspaces run build",
     "test": "anchor test",
