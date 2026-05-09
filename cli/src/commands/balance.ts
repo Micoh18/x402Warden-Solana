@@ -1,54 +1,35 @@
 import { Command } from "commander";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { getAccount } from "@solana/spl-token";
-import {
-  X402WardenClient,
-  findAgentAccountPda,
-} from "@x402warden/sdk";
+import { getAssociatedTokenAddress, getAccount } from "@solana/spl-token";
 import { loadConfig } from "../config";
 import { success, error } from "../output";
 
 export const balanceCommand = new Command("balance")
   .description("Show SOL and USDC balances")
-  .option("--agent-id <id>", "Agent ID override")
-  .action(async (opts) => {
+  .action(async () => {
     try {
-      const agentIdOverride = opts.agentId != null ? parseInt(opts.agentId, 10) : undefined;
-      const config = loadConfig(agentIdOverride);
+      const config = loadConfig();
 
       const solBalance = await config.connection.getBalance(config.wallet.publicKey);
-      const sol = solBalance / LAMPORTS_PER_SOL;
+      const sol = (solBalance / LAMPORTS_PER_SOL).toString();
 
       let usdc = "0";
       let usdcAccountAddress = "none";
 
       try {
-        const client = new X402WardenClient({
-          connection: config.connection,
-          wallet: config.wallet,
-          programId: config.programId,
-        });
-
-        const [agentPda] = findAgentAccountPda(
-          config.wallet.publicKey,
-          config.agentId,
-          config.programId
+        const ata = await getAssociatedTokenAddress(
+          config.usdcMint,
+          config.wallet.publicKey
         );
-
-        const agentData = await client.getAgent(agentPda);
-        usdcAccountAddress = agentData.usdcTokenAccount.toBase58();
-
-        const tokenAccount = await getAccount(
-          config.connection,
-          agentData.usdcTokenAccount
-        );
-        usdc = tokenAccount.amount.toString();
+        const tokenAccount = await getAccount(config.connection, ata);
+        usdcAccountAddress = ata.toBase58();
+        usdc = (Number(tokenAccount.amount) / 1_000_000).toString();
       } catch {
-        // Agent not initialized or token account not found
+        // No USDC token account found
       }
 
       return success({
-        sol: sol.toString(),
+        sol,
         usdc,
         walletAddress: config.wallet.publicKey.toBase58(),
         usdcAccount: usdcAccountAddress,
