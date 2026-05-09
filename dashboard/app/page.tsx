@@ -50,7 +50,7 @@ export default function LandingPage() {
             payment, and resolve disputes. All on-chain with Solana x402.
           </p>
 
-          <div className="animate-fade-in-up-3 flex justify-center mb-32">
+          <div className="animate-fade-in-up-3 flex flex-col sm:flex-row gap-4 justify-center mb-32">
             {connected ? (
               <Link href="/agents">
                 <button className="inline-flex items-center gap-2 px-6 py-3 text-base font-normal rounded-full text-white transition-all duration-200 hover:shadow-[0_0_15px_rgba(86,255,232,0.3)]"
@@ -65,6 +65,14 @@ export default function LandingPage() {
             ) : (
               <ConnectButton />
             )}
+            <Link href="/integrate">
+              <button className="inline-flex items-center gap-2 px-6 py-3 text-base font-normal rounded-full text-gray-300 transition-all duration-200 hover:text-white"
+                style={{
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                }}>
+                Integrate with Your Agent
+              </button>
+            </Link>
           </div>
         </div>
       </main>
