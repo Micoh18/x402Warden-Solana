@@ -97,6 +97,12 @@ export default function LandingPage() {
           style={{
             background: "radial-gradient(ellipse 60% 80% at 50% 100%, rgba(86,255,232,0.05) 0%, transparent 60%)",
           }} />
+
+        <div className="absolute bottom-0 left-0 right-0 h-full" style={{
+          animation: "light-sweep 4s ease-in-out infinite",
+          background: "radial-gradient(ellipse 15% 120% at 50% 100%, rgba(86,255,232,0.35) 0%, rgba(86,255,232,0.08) 30%, transparent 60%)",
+          mixBlendMode: "screen",
+        }} />
       </div>
 
       <footer className="relative z-10 px-6 py-6 flex flex-col items-center gap-2">
