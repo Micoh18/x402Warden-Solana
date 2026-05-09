@@ -4,107 +4,115 @@ import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ConnectButton } from "@/components/wallet/ConnectButton";
 import { ParticleField } from "@/components/ui/particle-field";
-import { Shield, Zap, Lock, ArrowRight, Hexagon, Fingerprint } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Shield, ArrowRight, ArrowDown } from "lucide-react";
 
 export default function LandingPage() {
   const { connected } = useWallet();
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-warden-black">
       <div className="absolute inset-0 z-0">
-        <ParticleField color="122, 155, 142" particleCount={100} speed={0.2} className="opacity-50" />
-      </div>
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] opacity-30 z-[1]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(122,155,142,0.08)_0%,_rgba(74,101,96,0.03)_40%,_transparent_70%)]" />
+        <ParticleField color="86, 255, 232" particleCount={60} speed={0.15} className="opacity-30" />
       </div>
 
-      <nav className="relative z-10 px-6 py-4 flex items-center justify-between lumina-header">
+      <nav className="relative z-10 px-8 py-5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="relative">
-            <Shield className="h-7 w-7 text-warden-lichen" />
-            <div className="absolute inset-0 blur-md bg-warden-lichen/25 rounded-full" />
+            <Shield className="h-6 w-6 text-warden-soul-light" />
+            <div className="absolute inset-0 blur-md bg-warden-soul-light/20 rounded-full" />
           </div>
-          <span className="font-display font-bold text-lg tracking-wider text-warden-bone text-glow-primary">
+          <span className="text-base font-normal text-white">
             x402warden
           </span>
         </div>
-        <ConnectButton />
+
+        {connected ? (
+          <Link href="/agents">
+            <button className="px-6 py-2 text-xs font-medium tracking-wide rounded-full border text-gray-300 transition-all duration-200 hover:text-white hover:border-white/20"
+              style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+              Dashboard
+            </button>
+          </Link>
+        ) : (
+          <ConnectButton />
+        )}
       </nav>
 
-      <main className="flex-1 flex items-center justify-center relative z-10">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-2 rounded-full border border-warden-lichen/25 bg-warden-moss/15 text-warden-bone text-sm font-mono font-medium mb-10 tracking-widest uppercase">
-            <Zap className="h-3.5 w-3.5 text-warden-soul" />
-            Solana x402 Protocol
-          </div>
-
-          <h1 className="animate-fade-in-up-1 text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 leading-[1.1]">
-            <span className="text-foreground">Security for</span>
+      <main className="flex-1 flex flex-col items-center justify-center relative z-10 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="animate-fade-in-up-1 text-[clamp(48px,8vw,88px)] font-semibold tracking-[-0.025em] leading-[1] mb-8">
+            <span className="text-white">Secure Smart Accounts</span>
             <br />
-            <span className="shimmer-text">AI Agents</span>
+            <span className="text-white">That Guard </span>
+            <span className="italic text-warden-soul-light">Your Agents.</span>
           </h1>
 
-          <p className="animate-fade-in-up-2 text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            Smart accounts with spending policies, merchant allowlists,
-            escrow payments, and dispute resolution — all on-chain.
+          <p className="animate-fade-in-up-2 text-lg text-gray-400 font-medium mb-12 max-w-2xl mx-auto leading-7">
+            Set spending policies, manage merchant allowlists, escrow every
+            payment, and resolve disputes — all on-chain with Solana x402.
           </p>
 
-          <div className="animate-fade-in-up-3 flex flex-col sm:flex-row gap-4 justify-center mb-20">
+          <div className="animate-fade-in-up-3 flex justify-center mb-32">
             {connected ? (
               <Link href="/agents">
-                <Button size="lg" className="gap-2">
+                <button className="inline-flex items-center gap-2 px-6 py-3 text-base font-normal rounded-full text-white transition-all duration-200 hover:shadow-[0_0_15px_rgba(86,255,232,0.3)]"
+                  style={{
+                    background: "#0A3135",
+                    border: "1px solid rgba(86, 255, 232, 0.35)",
+                  }}>
+                  <ArrowDown className="h-4 w-4" />
                   Go to Dashboard
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+                </button>
               </Link>
             ) : (
               <ConnectButton />
             )}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
-            <div className="animate-fade-in-up-2 group relative p-6 rounded-xl border border-warden-bone-dark/40 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
-              <div className="relative h-11 w-11 rounded-lg bg-warden-lichen/8 border border-warden-lichen/20 flex items-center justify-center mb-4 transition-all duration-300">
-                <Lock className="h-5 w-5 text-warden-lichen" />
-                <div className="absolute inset-0 blur-lg bg-warden-lichen/0 group-hover:bg-warden-lichen/10 rounded-lg transition-all duration-500" />
-              </div>
-              <h3 className="font-display font-semibold text-sm tracking-wide mb-2">Spending Policies</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Per-call limits, period budgets, and merchant allowlists to
-                keep your AI agent under control.
-              </p>
-            </div>
-            <div className="animate-fade-in-up-3 group relative p-6 rounded-xl border border-warden-bone-dark/40 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
-              <div className="relative h-11 w-11 rounded-lg bg-warden-soul/5 border border-warden-soul/15 flex items-center justify-center mb-4 transition-all duration-300">
-                <Fingerprint className="h-5 w-5 text-warden-soul" />
-                <div className="absolute inset-0 blur-lg bg-warden-soul/0 group-hover:bg-warden-soul/10 rounded-lg transition-all duration-500" />
-              </div>
-              <h3 className="font-display font-semibold text-sm tracking-wide mb-2">Escrow Protection</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Every payment is held in escrow with a configurable dispute
-                window before settlement.
-              </p>
-            </div>
-            <div className="animate-fade-in-up-4 group relative p-6 rounded-xl border border-warden-bone-dark/40 bg-warden-black/80 noise border-glow-hover transition-all duration-300">
-              <div className="relative h-11 w-11 rounded-lg bg-warden-moss/15 border border-warden-moss/25 flex items-center justify-center mb-4 transition-all duration-300">
-                <Hexagon className="h-5 w-5 text-warden-bone" />
-                <div className="absolute inset-0 blur-lg bg-warden-moss/0 group-hover:bg-warden-moss/10 rounded-lg transition-all duration-500" />
-              </div>
-              <h3 className="font-display font-semibold text-sm tracking-wide mb-2">Dispute Resolution</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Open disputes, merchant accept/contest flow, and automatic
-                refunds for unresponsive merchants.
-              </p>
-            </div>
-          </div>
         </div>
       </main>
 
-      <footer className="relative z-10 border-t border-border/20 px-6 py-5 text-center">
-        <span className="text-xs text-muted-foreground/60 font-mono tracking-widest uppercase">
-          x402warden &middot; DEV3PACK 2025
-        </span>
+      <div className="absolute bottom-0 left-0 right-0 h-[45vh] z-[2] pointer-events-none overflow-hidden">
+        <div className="absolute bottom-[-60%] left-1/2 -translate-x-1/2 w-[140vw] h-[80vh]">
+          <div className="absolute inset-0 rounded-[50%] border-2 opacity-40"
+            style={{
+              borderColor: "#56FFE8",
+              boxShadow: "0 0 30px rgba(86,255,232,0.15), inset 0 0 30px rgba(86,255,232,0.05)",
+            }} />
+        </div>
+
+        <div className="absolute bottom-[-65%] left-1/2 -translate-x-1/2 w-[160vw] h-[85vh]">
+          <div className="absolute inset-0 rounded-[50%] border opacity-25"
+            style={{
+              borderColor: "#56FFE8",
+              boxShadow: "0 0 20px rgba(86,255,232,0.1)",
+            }} />
+        </div>
+
+        <div className="absolute bottom-[-55%] left-1/2 -translate-x-1/2 w-[120vw] h-[70vh]">
+          <div className="absolute inset-0 rounded-[50%] border opacity-50"
+            style={{
+              borderColor: "#56FFE8",
+              boxShadow: "0 0 40px rgba(86,255,232,0.2), inset 0 0 40px rgba(86,255,232,0.08)",
+            }} />
+        </div>
+
+        <div className="absolute bottom-[-70%] left-1/2 -translate-x-1/2 w-[180vw] h-[90vh]">
+          <div className="absolute inset-0 rounded-[50%] border opacity-15"
+            style={{
+              borderColor: "#7A9B8E",
+              boxShadow: "0 0 15px rgba(122,155,142,0.08)",
+            }} />
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 h-full"
+          style={{
+            background: "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(86,255,232,0.04) 0%, transparent 60%)",
+          }} />
+      </div>
+
+      <footer className="relative z-10 px-6 py-6 flex flex-col items-center gap-2">
+        <span className="text-xs text-gray-500 tracking-wide">Scroll to Explore</span>
+        <ArrowDown className="h-4 w-4 text-gray-600 animate-bounce" />
       </footer>
     </div>
   );
