@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ConnectButton } from "@/components/wallet/ConnectButton";
 import { ParticleField } from "@/components/ui/particle-field";
-import { Shield, ArrowRight, ArrowDown } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, ArrowDown } from "lucide-react";
 
 export default function LandingPage() {
   const { connected } = useWallet();
@@ -17,10 +18,7 @@ export default function LandingPage() {
 
       <nav className="relative z-10 px-8 py-5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="relative">
-            <Shield className="h-6 w-6 text-warden-soul-light" />
-            <div className="absolute inset-0 blur-md bg-warden-soul-light/20 rounded-full" />
-          </div>
+          <Image src="/logo.svg" alt="x402warden" width={28} height={28} />
           <span className="text-base font-normal text-white">
             x402warden
           </span>
