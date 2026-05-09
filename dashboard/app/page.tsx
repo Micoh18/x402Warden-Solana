@@ -72,15 +72,15 @@ export default function LandingPage() {
       <div className="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
         <div className="absolute" style={{
           left: "50%",
-          top: "calc(100% + 15vh)",
+          top: "calc(100% + 22vh)",
           transform: "translateX(-50%) rotate(-2deg)",
           animation: "orbital-breathe 6s ease-in-out infinite",
         }}>
           {[
-            { w: 1400, h: 700, border: "2px solid #56FFE8", shadow: "0 0 15px 2px rgba(86,255,232,0.5), 0 0 60px 5px rgba(86,255,232,0.15), inset 0 0 15px 2px rgba(86,255,232,0.08)" },
-            { w: 1600, h: 800, border: "1.5px solid rgba(86,255,232,0.5)", shadow: "0 0 12px 1px rgba(86,255,232,0.35), 0 0 50px 3px rgba(86,255,232,0.1)" },
-            { w: 1800, h: 900, border: "1px solid rgba(86,255,232,0.3)", shadow: "0 0 10px 1px rgba(86,255,232,0.15)" },
-            { w: 2000, h: 1000, border: "1px solid rgba(86,255,232,0.15)", shadow: "0 0 8px rgba(86,255,232,0.06)" },
+            { w: 1800, h: 600, border: "2px solid #56FFE8", shadow: "0 0 15px 2px rgba(86,255,232,0.5), 0 0 60px 5px rgba(86,255,232,0.15), inset 0 0 15px 2px rgba(86,255,232,0.08)" },
+            { w: 2100, h: 700, border: "1.5px solid rgba(86,255,232,0.5)", shadow: "0 0 12px 1px rgba(86,255,232,0.35), 0 0 50px 3px rgba(86,255,232,0.1)" },
+            { w: 2400, h: 800, border: "1px solid rgba(86,255,232,0.3)", shadow: "0 0 10px 1px rgba(86,255,232,0.15)" },
+            { w: 2700, h: 900, border: "1px solid rgba(86,255,232,0.15)", shadow: "0 0 8px rgba(86,255,232,0.06)" },
           ].map((ring, i) => (
             <div key={i} className="absolute rounded-[50%]" style={{
               width: `${ring.w}px`,
