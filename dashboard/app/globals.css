@@ -195,20 +195,14 @@
   }
 }
 
-@keyframes light-sweep {
+@keyframes line-glow-sweep {
   0% {
-    transform: translateX(50vw);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
   }
   100% {
-    transform: translateX(-50vw);
-    opacity: 0;
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
   }
 }
 

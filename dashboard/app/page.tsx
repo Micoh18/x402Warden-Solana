@@ -105,22 +105,24 @@ export default function LandingPage() {
           animation: "orbital-breathe 6s ease-in-out infinite",
         }}>
           {[
-            { w: 1800, h: 600 },
-            { w: 2100, h: 700 },
-            { w: 2400, h: 800 },
-            { w: 2700, h: 900 },
+            { w: 1800, h: 600, bw: 3 },
+            { w: 2100, h: 700, bw: 2.5 },
+            { w: 2400, h: 800, bw: 2 },
+            { w: 2700, h: 900, bw: 1.5 },
           ].map((ring, i) => (
-            <div key={`mask-${i}`} className="absolute rounded-[50%] overflow-hidden" style={{
+            <div key={`glow-${i}`} className="absolute rounded-[50%]" style={{
               width: `${ring.w}px`,
               height: `${ring.h}px`,
               left: `${-ring.w / 2}px`,
               top: `${-ring.h / 2}px`,
-            }}>
-              <div className="absolute inset-0" style={{
-                background: "radial-gradient(ellipse 12% 100% at 50% 50%, rgba(86,255,232,0.6) 0%, transparent 50%)",
-                animation: `light-sweep 4s ease-in-out ${i * 0.15}s infinite`,
-              }} />
-            </div>
+              border: `${ring.bw}px solid #56FFE8`,
+              boxShadow: "0 0 12px 2px rgba(86,255,232,0.5), 0 0 40px 4px rgba(86,255,232,0.15)",
+              WebkitMaskImage: "linear-gradient(90deg, transparent 0%, transparent 35%, white 45%, white 55%, transparent 65%, transparent 100%)",
+              maskImage: "linear-gradient(90deg, transparent 0%, transparent 35%, white 45%, white 55%, transparent 65%, transparent 100%)",
+              WebkitMaskSize: "300% 100%",
+              maskSize: "300% 100%",
+              animation: `line-glow-sweep 4s ease-in-out ${i * 0.1}s infinite`,
+            }} />
           ))}
         </div>
       </div>
