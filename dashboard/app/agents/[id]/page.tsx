@@ -165,7 +165,7 @@ export default function AgentDetailPage() {
             </div>
             <Separator className="opacity-30" />
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground text-xs">Auto-Settle</span>
+              <span className="text-muted-foreground text-xs">Settle Enabled</span>
               <Badge variant={policy.autoSettleEnabled ? "success" : "secondary"}>
                 {policy.autoSettleEnabled ? "On" : "Off"}
               </Badge>

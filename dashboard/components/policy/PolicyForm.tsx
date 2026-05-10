@@ -115,7 +115,7 @@ export function PolicyForm({ agentPda, policy }: PolicyFormProps) {
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label htmlFor="autosettle">Auto-Settle</Label>
+              <Label htmlFor="autosettle">Settle Enabled</Label>
               <Switch
                 id="autosettle"
                 checked={autoSettleEnabled}
