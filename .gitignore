@@ -33,3 +33,5 @@ Thumbs.db
 
 # Solana
 test-ledger/
+
+.vercel
