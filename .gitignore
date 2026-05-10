@@ -35,3 +35,23 @@ Thumbs.db
 test-ledger/
 
 .vercel
+
+# Local config
+.mcp.json
+.claude/settings.json
+.claude/settings.local.json
+.claude/worktrees/
+.claude/skills/
+.agents/
+skills-lock.json
+
+# Keypairs
+keypair.json
+demo-keypair.json
+*.keypair
+
+# Internal docs
+PLAN-*.md
+DEMO-*.md
+VIDEO-*.md
+designs/
