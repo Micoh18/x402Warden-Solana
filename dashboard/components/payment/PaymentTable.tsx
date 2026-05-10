@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DisputeButton } from "./DisputeButton";
+import { SettleButton } from "./SettleButton";
 import { shortenAddress, lamportsToUsdc, formatTimestamp, getPaymentStateKey } from "@/lib/utils";
 import type { PaymentWithPda } from "@/hooks/usePayments";
 import { PublicKey } from "@solana/web3.js";
@@ -68,6 +69,7 @@ export function PaymentTable({ payments, agentPda }: PaymentTableProps) {
           const now = Date.now() / 1000;
           const settleAfter = bnToNumber(p.account.settleAfter);
           const canDispute = state === "pending" && now < settleAfter;
+          const canSettle = state === "pending" && now >= settleAfter;
 
           return (
             <TableRow key={p.publicKey.toBase58()}>
@@ -89,9 +91,12 @@ export function PaymentTable({ payments, agentPda }: PaymentTableProps) {
               <TableCell className="text-xs text-muted-foreground">
                 {formatTimestamp(p.account.settleAfter)}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right flex gap-2 justify-end">
                 {canDispute && (
                   <DisputeButton agentPda={agentPda} escrowPda={p.publicKey} />
+                )}
+                {canSettle && (
+                  <SettleButton escrowPda={p.publicKey} merchant={p.account.merchant} />
                 )}
               </TableCell>
             </TableRow>
