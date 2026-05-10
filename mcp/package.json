@@ -1,6 +1,6 @@
 {
   "name": "x402warden-mcp",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": false,
   "type": "module",
   "description": "MCP server for x402warden — AI agent payment security on Solana",
@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "bin": {
-    "x402warden-mcp": "./dist/index.js"
+    "x402warden-mcp": "dist/index.js"
   },
   "files": ["dist", "README.md", "package.json"],
   "engines": {

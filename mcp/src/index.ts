@@ -123,8 +123,9 @@ async function handlePay(args: Record<string, unknown>) {
   const body = args.body as string | undefined;
   const headersRaw = args.headers as string | undefined;
   const maxAmount = args.maxAmount as number | undefined;
+  const agentIdOverride = args.agentId != null ? (args.agentId as number) : undefined;
 
-  const config = loadConfig();
+  const config = loadConfig(agentIdOverride);
   const headers: Record<string, string> = headersRaw ? JSON.parse(headersRaw) : {};
 
   const fetchOpts: RequestInit = { method, headers };
@@ -305,7 +306,8 @@ async function handleInit(args: Record<string, unknown>) {
 }
 
 async function handleSetPolicy(args: Record<string, unknown>) {
-  const config = loadConfig();
+  const agentIdOverride = args.agentId != null ? (args.agentId as number) : undefined;
+  const config = loadConfig(agentIdOverride);
 
   const client = new X402WardenClient({
     connection: config.connection,
@@ -333,6 +335,37 @@ async function handleSetPolicy(args: Record<string, unknown>) {
   return { txSignature };
 }
 
+async function handleSettle(args: Record<string, unknown>) {
+  const agentIdOverride = args.agentId != null ? (args.agentId as number) : undefined;
+  const paymentId = args.paymentId as number;
+  const config = loadConfig(agentIdOverride);
+
+  const client = new X402WardenClient({
+    connection: config.connection,
+    wallet: config.wallet,
+    programId: config.programId,
+  });
+
+  const [agentPda] = findAgentAccountPda(
+    config.wallet.publicKey,
+    config.agentId,
+    config.programId
+  );
+
+  const { findPaymentEscrowPda } = await import("./sdk/pda.js");
+  const [escrowPda] = findPaymentEscrowPda(agentPda, paymentId, config.programId);
+
+  const escrowData = await client.getPayment(escrowPda);
+  const merchantPubkey = escrowData.merchant;
+
+  const { getAssociatedTokenAddress } = await import("@solana/spl-token");
+  const merchantTokenAccount = await getAssociatedTokenAddress(config.usdcMint, merchantPubkey);
+
+  const txSignature = await client.settlePayment(escrowPda, merchantTokenAccount);
+
+  return { txSignature, paymentId, merchant: merchantPubkey.toBase58() };
+}
+
 // ── Tool definitions ──
 
 const TOOLS = [
@@ -344,6 +377,7 @@ const TOOLS = [
       type: "object" as const,
       properties: {
         url: { type: "string", description: "Target URL to request" },
+        agentId: { type: "number", description: "Agent ID (default 0)" },
         method: { type: "string", description: "HTTP method", default: "GET" },
         body: { type: "string", description: "Request body (JSON string)" },
         headers: { type: "string", description: "Request headers (JSON string)" },
@@ -397,6 +431,10 @@ const TOOLS = [
     inputSchema: {
       type: "object" as const,
       properties: {
+        agentId: {
+          type: "number",
+          description: "Agent ID (default 0)",
+        },
         maxPerCall: {
           type: "number",
           description: "Max USDC per call (micro-USDC)",
@@ -427,6 +465,25 @@ const TOOLS = [
         },
       },
       required: ["maxPerCall", "maxPerPeriod"],
+    },
+  },
+  {
+    name: "x402_settle",
+    description:
+      "Settle a payment after the dispute window has expired. Releases escrowed USDC to the merchant.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        paymentId: {
+          type: "number",
+          description: "Payment ID to settle",
+        },
+        agentId: {
+          type: "number",
+          description: "Agent ID (default 0)",
+        },
+      },
+      required: ["paymentId"],
     },
   },
 ];
@@ -463,6 +520,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         break;
       case "x402_set_policy":
         result = await handleSetPolicy(args as Record<string, unknown>);
+        break;
+      case "x402_settle":
+        result = await handleSettle(args as Record<string, unknown>);
         break;
       default:
         return {

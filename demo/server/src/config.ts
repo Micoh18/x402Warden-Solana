@@ -10,7 +10,7 @@
 export const PORT = parseInt(process.env.PORT || "3001", 10);
 
 export const MERCHANT_ADDRESS =
-  process.env.MERCHANT_ADDRESS || "BPFLoaderUpgradeab1e11111111111111111111111";
+  process.env.MERCHANT_ADDRESS || "5kDVFXmiZFdnAwm8p58BSR8Qourwp9nDeDxiefsaZnjU";
 
 export const NETWORK = "solana-devnet";
 
