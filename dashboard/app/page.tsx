@@ -1,11 +1,31 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ConnectButton } from "@/components/wallet/ConnectButton";
 import { ParticleField } from "@/components/ui/particle-field";
 import Image from "next/image";
 import { SolarIcon } from "@/components/ui/icon";
+import { CopyButton } from "@/components/ui/copy-button";
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+      className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono transition-all duration-200 border cursor-pointer"
+      style={{
+        borderColor: copied ? "rgba(86,255,232,0.4)" : "rgba(255,255,255,0.1)",
+        background: copied ? "rgba(86,255,232,0.1)" : "rgba(255,255,255,0.05)",
+        color: copied ? "#56FFE8" : "#9ca3af",
+      }}
+    >
+      <SolarIcon name={copied ? "shield" : "hash"} size={12} />
+      {copied ? "Copied!" : "Copy"}
+    </button>
+  );
+}
 
 function CodeBlock({ children, title }: { children: string; title?: string }) {
   return (
@@ -308,16 +328,131 @@ response = client.get(<span className="text-green-400">&quot;http://api.example.
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="relative z-10 border-t border-white/5 py-8 text-center">
-        <p className="text-sm text-gray-500">
-          <a href="https://github.com/Micoh18/x402Warden-Solana" target="_blank" className="text-warden-soul-light hover:underline">
-            GitHub
-          </a>
-          {" "}&middot;{" "}
-          Built for DEV3PACK Hackathon 2026
-        </p>
-      </footer>
+      {/* ── npm / MCP Server ── */}
+      <section className="relative z-10 py-24 px-6 border-t border-white/5">
+        <div className="max-w-5xl mx-auto space-y-12">
+
+          <div className="text-center">
+            <span className="text-xs font-semibold text-warden-soul-light uppercase tracking-wider">npm package</span>
+            <h2 className="text-4xl font-semibold text-white mt-3 mb-4">MCP Server for AI Agents</h2>
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+              Give your AI agent native x402 payment capabilities. Works with Claude, GPT, and any MCP-compatible client.
+            </p>
+          </div>
+
+          {/* Install command */}
+          <div className="max-w-2xl mx-auto">
+            <div className="rounded-xl border border-warden-soul-light/20 bg-warden-soul-light/[0.03] overflow-hidden">
+              <div className="px-5 py-3 border-b border-warden-soul-light/10 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <SolarIcon name="zap" size={16} className="text-warden-soul-light" />
+                  <span className="text-sm font-medium text-white">Install</span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full border border-warden-soul-light/20 text-warden-soul-light font-mono">
+                  v0.1.0
+                </span>
+              </div>
+              <div className="flex items-center justify-between px-5 py-4 bg-black/40">
+                <pre className="font-mono text-sm text-gray-300">
+<code><span className="text-warden-soul-light/60">$</span> npm install -g x402warden-mcp</code>
+                </pre>
+                <CopyButton text="npm install -g x402warden-mcp" />
+              </div>
+            </div>
+          </div>
+
+          {/* Config + Tools grid */}
+          <div className="grid md:grid-cols-2 gap-6">
+
+            {/* .mcp.json config */}
+            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden hover:border-warden-soul-light/20 transition-all duration-300">
+              <div className="p-6 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-warden-soul-light/10">
+                    <SolarIcon name="settings" size={20} className="text-warden-soul-light" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-semibold text-warden-soul-light uppercase tracking-wider">Configuration</span>
+                    <h4 className="text-base font-semibold text-white">Add to .mcp.json</h4>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Drop this into your project&apos;s <code className="text-gray-300 bg-white/5 px-1 rounded">.mcp.json</code> and
+                  your AI agent gains x402 payment tools automatically.
+                </p>
+              </div>
+              <div className="border-t border-white/[0.06]">
+                <div className="flex items-start justify-between p-4 bg-black/30">
+                  <pre className="overflow-x-auto text-xs font-mono text-gray-400">
+<code>{`{
+  "mcpServers": {
+    "x402warden": {
+      "command": "npx",
+      "args": [
+        "-y", "x402warden-mcp"
+      ],
+      "env": {
+        "SOLANA_KEYPAIR_PATH": "./keypair.json",
+        "AGENT_ID": "0"
+      }
+    }
+  }
+}`}</code>
+                  </pre>
+                  <CopyButton text={`{\n  "mcpServers": {\n    "x402warden": {\n      "command": "npx",\n      "args": [\n        "-y", "x402warden-mcp"\n      ],\n      "env": {\n        "SOLANA_KEYPAIR_PATH": "./keypair.json",\n        "AGENT_ID": "0"\n      }\n    }\n  }\n}`} />
+                </div>
+              </div>
+            </div>
+
+            {/* Available Tools */}
+            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden hover:border-warden-soul-light/20 transition-all duration-300">
+              <div className="p-6 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-warden-soul-light/10">
+                    <SolarIcon name="hexagon" size={20} className="text-warden-soul-light" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-semibold text-warden-soul-light uppercase tracking-wider">5 Tools</span>
+                    <h4 className="text-base font-semibold text-white">What Your Agent Gets</h4>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Full on-chain wallet management through natural language.
+                  No SDK code required.
+                </p>
+              </div>
+              <div className="border-t border-white/[0.06] p-4 space-y-2">
+                {[
+                  { tool: "x402_pay", desc: "Pay an x402 service and return the response" },
+                  { tool: "x402_balance", desc: "Check SOL and USDC balances" },
+                  { tool: "x402_status", desc: "View agent account and policy on-chain" },
+                  { tool: "x402_init", desc: "Create a new agent account" },
+                  { tool: "x402_set_policy", desc: "Set spending limits and rules" },
+                ].map((t) => (
+                  <div key={t.tool} className="flex items-start gap-3 rounded-lg px-3 py-2 bg-black/30 border border-white/[0.04]">
+                    <code className="text-xs font-mono text-warden-soul-light whitespace-nowrap mt-0.5">{t.tool}</code>
+                    <span className="text-xs text-gray-500">{t.desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* npm link */}
+          <div className="text-center pt-2">
+            <a href="https://www.npmjs.com/package/x402warden-mcp" target="_blank" rel="noopener noreferrer">
+              <button className="inline-flex items-center gap-2 px-8 py-3 text-sm font-medium rounded-full text-white transition-all duration-200 hover:shadow-[0_0_20px_rgba(86,255,232,0.2)]"
+                style={{ border: "1px solid rgba(86, 255, 232, 0.25)", background: "rgba(86, 255, 232, 0.05)" }}>
+                View on npm
+                <SolarIcon name="arrow-right" size={16} />
+              </button>
+            </a>
+          </div>
+
+        </div>
+      </section>
+
     </div>
   );
 }
