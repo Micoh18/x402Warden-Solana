@@ -348,7 +348,7 @@ response = client.get(<span className="text-green-400">&quot;http://api.example.
                   <span className="text-sm font-medium text-white">Install</span>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 rounded-full border border-warden-soul-light/20 text-warden-soul-light font-mono">
-                  v0.1.0
+                  v0.1.2
                 </span>
               </div>
               <div className="flex items-center justify-between px-5 py-4 bg-black/40">
@@ -411,7 +411,7 @@ response = client.get(<span className="text-green-400">&quot;http://api.example.
                     <SolarIcon name="hexagon" size={20} className="text-warden-soul-light" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-semibold text-warden-soul-light uppercase tracking-wider">5 Tools</span>
+                    <span className="text-[10px] font-semibold text-warden-soul-light uppercase tracking-wider">6 Tools</span>
                     <h4 className="text-base font-semibold text-white">What Your Agent Gets</h4>
                   </div>
                 </div>
@@ -427,6 +427,7 @@ response = client.get(<span className="text-green-400">&quot;http://api.example.
                   { tool: "x402_status", desc: "View agent account and policy on-chain" },
                   { tool: "x402_init", desc: "Create a new agent account" },
                   { tool: "x402_set_policy", desc: "Set spending limits and rules" },
+                  { tool: "x402_settle", desc: "Settle payment after dispute window" },
                 ].map((t) => (
                   <div key={t.tool} className="flex items-start gap-3 rounded-lg px-3 py-2 bg-black/30 border border-white/[0.04]">
                     <code className="text-xs font-mono text-warden-soul-light whitespace-nowrap mt-0.5">{t.tool}</code>
