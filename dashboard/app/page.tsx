@@ -7,7 +7,6 @@ import { ConnectButton } from "@/components/wallet/ConnectButton";
 import { ParticleField } from "@/components/ui/particle-field";
 import Image from "next/image";
 import { SolarIcon } from "@/components/ui/icon";
-import { CopyButton } from "@/components/ui/copy-button";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
