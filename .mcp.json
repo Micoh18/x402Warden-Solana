@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "x402warden": {
+      "command": "node",
+      "args": ["d:/JUAN CARLITOS XD/proyectos cursor/DEV3PACK/proyecto/mcp/dist/index.js"],
+      "env": {
+        "SOLANA_KEYPAIR_PATH": "d:/JUAN CARLITOS XD/proyectos cursor/DEV3PACK/proyecto/keypair.json",
+        "SOLANA_RPC_URL": "https://api.devnet.solana.com"
+      }
+    }
+  }
+}

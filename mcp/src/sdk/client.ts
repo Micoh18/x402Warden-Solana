@@ -4,12 +4,9 @@ import {
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
 } from "@solana/web3.js";
-import {
-  AnchorProvider,
-  Program,
-  Wallet,
-  BN,
-} from "@coral-xyz/anchor";
+import anchor from "@coral-xyz/anchor";
+const { AnchorProvider, Program, BN } = anchor;
+type Wallet = InstanceType<typeof anchor.Wallet>;
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PROGRAM_ID } from "./constants.js";
 import {
@@ -31,13 +28,13 @@ import IDL from "./idl.js";
 
 export interface X402WardenClientConfig {
   connection: Connection;
-  wallet: Wallet;
+  wallet: any;
   programId?: PublicKey;
 }
 
 export class X402WardenClient {
-  readonly program: Program;
-  readonly provider: AnchorProvider;
+  readonly program: any;
+  readonly provider: any;
   readonly programId: PublicKey;
 
   constructor(config: X402WardenClientConfig) {
@@ -51,7 +48,7 @@ export class X402WardenClient {
   // ── Instructions ──
 
   async createAgent(
-    agentId: BN | number,
+    agentId: any,
     usdcTokenAccount: PublicKey,
     agentPda: PublicKey,
     policyPda: PublicKey
@@ -113,7 +110,7 @@ export class X402WardenClient {
     allowlistPda: PublicKey,
     merchant: PublicKey,
     category: number,
-    maxOverride: BN | number
+    maxOverride: any
   ): Promise<string> {
     const [policyPda] = findPolicyAccountPda(agentPda, this.programId);
 
@@ -149,7 +146,7 @@ export class X402WardenClient {
 
   async processPayment(
     agentPda: PublicKey,
-    amount: BN | number,
+    amount: any,
     merchant: PublicKey,
     x402RequestHash: number[] | Uint8Array,
     userTokenAccount: PublicKey,

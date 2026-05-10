@@ -7,7 +7,8 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { Wallet, BN } from "@coral-xyz/anchor";
+import anchor from "@coral-xyz/anchor";
+const { Wallet, BN } = anchor;
 import { getAssociatedTokenAddress, getAccount } from "@solana/spl-token";
 import {
   X402WardenClient,
@@ -26,7 +27,7 @@ import * as crypto from "crypto";
 interface McpConfig {
   keypair: Keypair;
   connection: Connection;
-  wallet: Wallet;
+  wallet: any;
   agentId: number;
   usdcMint: PublicKey;
   programId: PublicKey;
