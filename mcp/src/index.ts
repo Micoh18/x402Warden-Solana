@@ -14,8 +14,8 @@ import {
   PROGRAM_ID,
   findAgentAccountPda,
   findPolicyAccountPda,
-} from "@x402warden/sdk";
-import type { SetPolicyParams } from "@x402warden/sdk";
+} from "./sdk/index.js";
+import type { SetPolicyParams } from "./sdk/index.js";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
