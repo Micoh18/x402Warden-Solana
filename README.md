@@ -78,6 +78,16 @@ $ x402warden pay http://localhost:3001/api/research
 
 ---
 
+## See It in Action
+
+Claude Code paying an x402 service through x402warden MCP — policy checked, USDC escrowed, data received. All in natural language.
+
+<p align="center">
+  <img src="assets/mcp-demo.gif" alt="x402warden MCP demo with Claude Code" width="800" />
+</p>
+
+---
+
 ## Quick Start
 
 ### Prerequisites
