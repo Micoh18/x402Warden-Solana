@@ -8,8 +8,18 @@ export function paid(data: Record<string, unknown>): never {
   process.exit(0);
 }
 
-export function policyBlock(msg: string): never {
-  console.error(JSON.stringify({ status: "blocked", error: msg }));
+export function policyBlock(
+  reason: string,
+  data: Record<string, unknown> = {}
+): never {
+  console.error(
+    JSON.stringify({
+      status: "blocked",
+      blockedBy: "x402warden_payment_firewall",
+      reason,
+      ...data,
+    })
+  );
   process.exit(1);
 }
 

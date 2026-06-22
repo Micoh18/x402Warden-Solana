@@ -129,7 +129,7 @@ export default function AgentDetailPage() {
         </div>
       </div>
 
-      <AgentStats agent={agent} policy={policy} />
+      <AgentStats agent={agent} payments={payments || []} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 animate-fade-in-up-2">

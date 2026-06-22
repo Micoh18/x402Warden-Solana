@@ -35,3 +35,14 @@ export function generateRequestHash(url: string, method: string): number[] {
   hash.update(`${method}:${url}`);
   return Array.from(hash.digest());
 }
+
+export function generateRequestHashHex(url: string, method: string): string {
+  return crypto.createHash("sha256").update(`${method}:${url}`).digest("hex");
+}
+
+export function hashJson(value: unknown): string {
+  return crypto
+    .createHash("sha256")
+    .update(typeof value === "string" ? value : JSON.stringify(value))
+    .digest("hex");
+}

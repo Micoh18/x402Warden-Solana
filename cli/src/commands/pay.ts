@@ -4,14 +4,34 @@ import { BN } from "@coral-xyz/anchor";
 import {
   X402WardenClient,
   findAgentAccountPda,
+  findPaymentEscrowPda,
 } from "@x402warden/sdk";
 import { loadConfig } from "../config";
 import { success, paid, policyBlock, error } from "../output";
 import {
+  type Parsed402,
   parse402Response,
   buildPaymentHeader,
   generateRequestHash,
+  generateRequestHashHex,
+  hashJson,
 } from "../x402-flow";
+
+function formatMicroUsdc(amount: number): string {
+  return (amount / 1_000_000).toFixed(6);
+}
+
+function humanizePolicyError(msg: string): string {
+  const lower = msg.toLowerCase();
+  if (lower.includes("per call")) return "Payment exceeds per-call policy";
+  if (lower.includes("period")) return "Payment exceeds period budget";
+  if (lower.includes("paused")) return "Agent is paused";
+  if (lower.includes("allowlist") || lower.includes("merchant")) {
+    return "Merchant is not allowed by policy";
+  }
+  if (lower.includes("exceeds")) return msg;
+  return msg;
+}
 
 export const payCommand = new Command("pay")
   .description("Make an HTTP request, automatically handling x402 payments")
@@ -22,6 +42,11 @@ export const payCommand = new Command("pay")
   .option("--max-amount <amount>", "Maximum payment amount (micro-USDC)")
   .option("--agent-id <id>", "Agent ID override")
   .action(async (url: string, opts) => {
+    let parsedPayment: Parsed402 | undefined;
+    const method = String(opts.method || "GET").toUpperCase();
+    const maxAllowed =
+      opts.maxAmount != null ? parseInt(opts.maxAmount, 10) : undefined;
+
     try {
       const agentIdOverride = opts.agentId != null ? parseInt(opts.agentId, 10) : undefined;
       const config = loadConfig(agentIdOverride);
@@ -31,7 +56,7 @@ export const payCommand = new Command("pay")
         : {};
 
       const fetchOpts: RequestInit = {
-        method: opts.method,
+        method,
         headers,
       };
       if (opts.body) {
@@ -60,10 +85,18 @@ export const payCommand = new Command("pay")
 
       const responseBody = await response.json();
       const payment = parse402Response(responseBody);
+      parsedPayment = payment;
 
-      if (opts.maxAmount && payment.price > parseInt(opts.maxAmount, 10)) {
+      if (maxAllowed != null && payment.price > maxAllowed) {
         return policyBlock(
-          `Price ${payment.price} exceeds max-amount ${opts.maxAmount}`
+          `Price ${payment.price} exceeds max-amount ${maxAllowed}`,
+          {
+            endpoint: url,
+            amountRequested: payment.price,
+            maxAllowed,
+            merchant: payment.payTo,
+            usdcBlocked: formatMicroUsdc(payment.price),
+          }
         );
       }
 
@@ -81,8 +114,14 @@ export const payCommand = new Command("pay")
 
       const agentData = await client.getAgent(agentPda);
       const userTokenAccount = agentData.usdcTokenAccount;
+      const paymentId = agentData.paymentCount;
+      const [paymentEscrowPda] = findPaymentEscrowPda(
+        agentPda,
+        paymentId,
+        config.programId
+      );
 
-      const requestHash = generateRequestHash(url, opts.method);
+      const requestHash = generateRequestHash(url, method);
 
       const txSignature = await client.processPayment(
         agentPda,
@@ -97,7 +136,7 @@ export const payCommand = new Command("pay")
 
       const retryHeaders = { ...headers, "X-PAYMENT": paymentHeader };
       const retryOpts: RequestInit = {
-        method: opts.method,
+        method,
         headers: retryHeaders,
       };
       if (opts.body) {
@@ -117,6 +156,23 @@ export const payCommand = new Command("pay")
         statusCode: retryResponse.status,
         txSignature,
         amountPaid: payment.price,
+        receipt: {
+          version: 1,
+          agentId: config.agentId,
+          agentPda: agentPda.toBase58(),
+          paymentId: paymentId.toString(),
+          paymentEscrow: paymentEscrowPda.toBase58(),
+          merchant: payment.payTo,
+          endpoint: url,
+          method,
+          amount: payment.price,
+          paymentRequirementsHash: hashJson(responseBody),
+          requestHash: generateRequestHashHex(url, method),
+          responseHash: hashJson(retryBody),
+          decision: "allowed",
+          state: "paid_pending_settlement",
+          txSignature,
+        },
         body: retryBody,
       });
     } catch (err: any) {
@@ -127,7 +183,16 @@ export const payCommand = new Command("pay")
         msg.includes("exceeds") ||
         msg.includes("paused")
       ) {
-        return policyBlock(msg);
+        return policyBlock(humanizePolicyError(msg), {
+          endpoint: url,
+          amountRequested: parsedPayment?.price,
+          maxAllowed,
+          merchant: parsedPayment?.payTo,
+          usdcBlocked:
+            parsedPayment?.price != null
+              ? formatMicroUsdc(parsedPayment.price)
+              : undefined,
+        });
       }
       return error(msg);
     }

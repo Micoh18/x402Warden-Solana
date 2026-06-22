@@ -17,6 +17,7 @@ yarn dev          # http://localhost:3001
 
 Endpoints:
 - `GET /api/research` — returns valid research data (requires x402 payment)
+- `GET /api/enterprise-report` — expensive endpoint for blocked-payment demos
 - `GET /api/broken` — returns garbage data (triggers dispute flow)
 - `GET /health` — health check
 

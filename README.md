@@ -5,8 +5,8 @@
 <h1 align="center">x402warden</h1>
 
 <p align="center">
-  <strong>The security smart account for AI agents paying x402 services on Solana.</strong><br/>
-  Set spending policies. Escrow every payment. Get refunds when services fail.
+  <strong>The payment firewall with built-in buyer protection for autonomous x402 commerce.</strong><br/>
+  Block bad payments. Escrow every purchase. Prove, dispute, and recover when services fail.
 </p>
 
 <p align="center">
@@ -28,16 +28,20 @@
 
 ## The Problem
 
-When an AI agent pays an x402 service today, you lose money in two ways:
+AI agents can spend real money faster than humans can review it.
 
-1. **A buggy agent drains your wallet** — no spending limits, no allowlist, no rate limiting
-2. **A failed service keeps your money** — no refund mechanism if it returns garbage
+When an AI agent pays an x402 service today, it can:
+
+1. **Pay too much** for a request before anyone notices
+2. **Pay untrusted merchants** with no buyer-side firewall
+3. **Receive failed service** after the payment is accepted
+4. **Lose funds without recourse** because there is no refund path
 
 Every existing player (MCPay, Latinum, Kora, Crossmint) solves the **merchant side**. Nobody protects the **buyer**.
 
 ## The Solution
 
-**x402warden** is an on-chain smart account that sits between your agent and every payment:
+**x402warden** is the buyer protection layer for x402 payments: an on-chain smart account that sits between your agent and every payment.
 
 ```
 Your Agent → x402warden (policy check + escrow) → Merchant Service
