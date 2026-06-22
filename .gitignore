@@ -51,6 +51,7 @@ demo-keypair.json
 *.keypair
 
 # Internal docs
+_local-docs/
 PLAN-*.md
 DEMO-*.md
 VIDEO-*.md
