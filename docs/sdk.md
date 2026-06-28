@@ -137,6 +137,231 @@ The SDK automatically derives `paymentEscrowPda` and `escrowTokenPda` from the a
 
 ---
 
+## Receipt helpers
+
+Use `buildPaymentReceiptV1` to serialize a `PaymentEscrow` account into the
+canonical receipt shape shared by CLI, MCP, proxy, and dashboard.
+
+```typescript
+import { buildPaymentReceiptV1 } from "@x402warden/sdk";
+
+const escrow = await client.getPayment(paymentEscrowPda);
+const receipt = buildPaymentReceiptV1({
+  paymentEscrow: paymentEscrowPda,
+  account: escrow,
+  paymentRequirementsHash,
+  requestContextHash,
+  txSignature,
+});
+```
+
+The receipt's core fields come from the on-chain escrow account. HTTP response
+hashes and delivery checks should be attached as `deliveryEvidence` with an
+explicit source such as `caller_provided` or `signed_off_chain_record`.
+Use `x402warden receipt <payment-id-or-escrow-pda>`, MCP `x402_receipt`, or the
+dashboard receipt modal to rebuild this shape from an existing escrow account
+without re-running payment. Those lookup paths also attach
+`PaymentEvidenceAccount` hashes automatically when the account exists.
+
+See [`protection-models.md`](./protection-models.md) for source semantics.
+
+---
+
+## Delivery evidence helpers
+
+Use `evaluateDelivery` for objective post-payment checks. The helper returns a
+`PaymentDecision` plus `DeliveryEvidenceV1`.
+
+```typescript
+import {
+  deliveryFailureCodeToOnChainCode,
+  deliveryFailureCodeToReasonCode,
+  evaluateDelivery,
+  evidenceHashToReasonUri,
+  hexToBytes32,
+} from "@x402warden/sdk";
+
+const delivery = evaluateDelivery(
+  {
+    paymentEscrow: paymentEscrowPda.toBase58(),
+    statusCode: retryResponse.status,
+    responseHash,
+    bodyText,
+    parsedJson,
+    parseError,
+  },
+  { expectJson: true, expectNonEmpty: true }
+);
+
+if (!delivery.delivered) {
+  const reasonCode = deliveryFailureCodeToReasonCode(
+    delivery.evidence.failureCode
+  );
+  const reasonUri = evidenceHashToReasonUri(evidenceHash);
+  await client.openDispute(agentPda, paymentEscrowPda, reasonCode, reasonUri);
+}
+```
+
+To persist the evidence hash anchor on-chain, call `recordPaymentEvidence` after
+the paid retry. This creates a `PaymentEvidenceAccount` keyed by the payment
+escrow and stores hashes/codes only:
+
+```typescript
+await client.recordPaymentEvidence(agentPda, paymentEscrowPda, {
+  paymentRequirementsHash: hexToBytes32(paymentRequirementsHash),
+  requestContextHash: hexToBytes32(requestContextHash),
+  responseHash: hexToBytes32(responseHash),
+  evidenceHash: hexToBytes32(evidenceHash),
+  failureCode: deliveryFailureCodeToOnChainCode(delivery.evidence.failureCode),
+  statusCode: retryResponse.status,
+});
+```
+
+CLI `pay --record-evidence-on-chain` and MCP `x402_pay` with
+`recordEvidenceOnChain: true` use this path. It is an additional transaction and
+is therefore opt-in.
+
+Failure codes map to the current on-chain reason codes:
+
+| Failure code | Dispute reason |
+|---|---|
+| `NO_RESPONSE` | `REASON_NO_RESPONSE` |
+| `TIMEOUT` | `REASON_TIMEOUT` |
+| `NON_2XX`, `INVALID_JSON`, `EMPTY_BODY`, `SERVICE_ERROR` | `REASON_BAD_RESPONSE` |
+| `OTHER` | `REASON_OTHER` |
+
+---
+
+## Blocked payment receipts
+
+Use `buildBlockedPaymentReceiptV1`, `signBlockedPaymentReceiptV1`, and
+`verifyBlockedPaymentReceiptV1` for signed off-chain receipts when a payment is
+blocked before escrow exists.
+
+```typescript
+import {
+  buildBlockedPaymentReceiptV1,
+  signBlockedPaymentReceiptV1,
+  verifyBlockedPaymentReceiptV1,
+} from "@x402warden/sdk";
+
+const unsigned = buildBlockedPaymentReceiptV1({
+  signer: wallet.publicKey,
+  agentPda,
+  endpoint,
+  method: "GET",
+  merchant,
+  amountRequested,
+  maxAllowed,
+  reasonCode: "MAX_AMOUNT_EXCEEDED",
+  reason: "Price exceeds max-amount",
+  requestContextHash,
+  x402RequestHash,
+});
+
+const receipt = signBlockedPaymentReceiptV1(unsigned, keypair.secretKey);
+const valid = verifyBlockedPaymentReceiptV1(receipt);
+```
+
+This is a verifiable off-chain record. It does not create an escrow, and it is
+not an on-chain metric until stored by an indexer or submitted through a future
+on-chain preflight/event path.
+
+---
+
+## Protection metrics
+
+Use `buildProtectionMetricsV1` to aggregate buyer-protection metrics with the
+same source semantics used by CLI, MCP, and dashboard.
+
+```typescript
+import { buildProtectionMetricsV1 } from "@x402warden/sdk";
+
+const paymentEscrows = await program.account.paymentEscrow.all([
+  { memcmp: { offset: 8, bytes: agentPda.toBase58() } },
+]);
+
+const report = buildProtectionMetricsV1({
+  payments: paymentEscrows,
+  blockedReceipts: [signedBlockedReceipt],
+});
+```
+
+Rules:
+
+| Metric | Source |
+|---|---|
+| `usdc_protected` | Sum of all `PaymentEscrow.amount` values |
+| `active_escrow` | Count of `pending` or `disputed` escrows |
+| `usdc_recovered` | Sum of `refunded` escrow amounts |
+| `usdc_settled` | Sum of `settled` escrow amounts |
+| `usdc_blocked` | Sum of verified `BlockedPaymentReceiptV1.amountRequested` values, or `unavailable` |
+
+`localBlockedEstimate` is accepted for development and demos, but the returned
+metric is marked `local_estimate` with source `local_dev_only`.
+
+---
+
+## Merchant risk profile
+
+Use `buildMerchantRiskProfile` for a basic merchant profile derived only from
+`PaymentEscrow` accounts.
+
+```typescript
+import { buildMerchantRiskProfile } from "@x402warden/sdk";
+
+const profile = buildMerchantRiskProfile({
+  merchant,
+  payments: paymentEscrows,
+});
+```
+
+The profile reports total escrowed volume, settled count, active disputed count,
+refunded count, dispute rate, refund rate, and a conservative risk level:
+`low`, `medium`, `high`, or `unknown`. Small samples return `unknown`; no social
+reviews, votes, or subjective scoring are included.
+The dashboard payment table renders this same risk level per merchant from the
+currently loaded on-chain payment escrows.
+
+---
+
+## Policy templates and simulator
+
+Use `buildPolicyTemplatePreset`, `validatePolicyTemplateV1`, and
+`simulatePolicyPayment` to work with local policy templates before submitting an
+on-chain `set_policy` transaction.
+
+```typescript
+import {
+  buildPolicyTemplatePreset,
+  simulatePolicyPayment,
+} from "@x402warden/sdk";
+
+const template = buildPolicyTemplatePreset("balanced");
+const decision = simulatePolicyPayment({
+  template,
+  amount: "1000000",
+  merchant,
+  spentInPeriod: "0",
+});
+```
+
+Built-in presets are `conservative`, `balanced`, `exploration`, and
+`high_value`.
+
+The simulator mirrors the current on-chain `process_payment` order:
+
+1. paused agent
+2. global `maxPerCall`
+3. allowlist membership and merchant override
+4. period budget
+
+This matters because merchant `maxPerCallOverride` is checked after the global
+per-call limit in the current program. The simulator is predictive only; funds
+are controlled by on-chain policy state.
+
+---
+
 ### `settlePayment(escrowPda, merchantTokenAccount)`
 
 Releases escrowed funds to the merchant after the dispute window has passed.

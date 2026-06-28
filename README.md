@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>The payment firewall with built-in buyer protection for autonomous x402 commerce.</strong><br/>
-  Block bad payments. Escrow every purchase. Prove, dispute, and recover when services fail.
+  Block bad payments, escrow approved purchases, issue verifiable receipts, and dispute failed service.
 </p>
 
 <p align="center">
@@ -57,7 +57,7 @@ Your Agent → x402warden (policy check + escrow) → Merchant Service
 
 ## Verified on Devnet
 
-The full flow has been tested end-to-end on Solana devnet with real USDC:
+The core payment flow has been tested on Solana devnet with real USDC:
 
 ```bash
 $ x402warden balance
@@ -93,6 +93,9 @@ Claude Code paying an x402 service through x402warden MCP — policy checked, US
 ---
 
 ## Quick Start
+
+For deployment and mainnet gating, see
+[Production Readiness](docs/production-readiness.md).
 
 ### Prerequisites
 
@@ -142,6 +145,33 @@ npx x402warden policy \
 
 # 4. Pay any x402 service
 npx x402warden pay https://api.example.com/research
+
+# Optional: open a dispute automatically when objective delivery checks fail
+npx x402warden pay https://api.example.com/research \
+  --auto-dispute-on-fail \
+  --record-evidence-on-chain \
+  --require-evidence-on-chain \
+  --expect-json \
+  --expect-non-empty \
+  --timeout-ms 30000 \
+  --retries 1
+
+# Report protection metrics with explicit sources
+npx x402warden spend-report
+
+# Fetch a canonical receipt from an existing on-chain escrow
+npx x402warden receipt <PAYMENT_ID_OR_ESCROW_PDA>
+
+# Build a merchant risk profile from on-chain escrow history
+npx x402warden merchant-score <MERCHANT_PUBLIC_KEY>
+
+# Export and simulate a local policy template before applying it
+npx x402warden policy-template export balanced --out policy.yaml --format yaml
+npx x402warden policy-template simulate policy.yaml \
+  --amount 1000000 \
+  --merchant <MERCHANT_PUBLIC_KEY> \
+  --merchant-entry <MERCHANT_PUBLIC_KEY>
+npx x402warden policy --template policy.yaml --dry-run
 ```
 
 **Use from any language:**
@@ -168,6 +198,25 @@ console.log(result.body);
 
 **Exit codes:** `0` success · `1` blocked by policy · `2` error
 
+Blocked CLI responses include `blockedReceipt` when the local wallet can sign a
+`BlockedPaymentReceiptV1`. That receipt is an off-chain record for blocked USDC;
+it is not counted as on-chain escrow. `spend-report` aggregates protected,
+active, recovered, and settled USDC from on-chain escrows; blocked USDC is
+`unavailable` unless signed blocked receipts are provided with `--blocked-receipt`.
+`merchant-score` uses only `PaymentEscrow` states for the configured agent and
+returns `unknown` risk until the merchant has enough payment history.
+`receipt` rebuilds `PaymentReceiptV1` from an on-chain escrow and automatically
+attaches `PaymentEvidenceAccount` hashes when present; otherwise HTTP-only hashes
+are included only when passed explicitly by the caller.
+Use `pay --record-evidence-on-chain` to create a `PaymentEvidenceAccount` with
+receipt and delivery hashes after the paid retry. This is an extra on-chain
+transaction and is opt-in. Add `--require-evidence-on-chain` when operators
+prefer an explicit `protection_failed` result over silently accepting a paid
+response whose evidence transaction failed.
+Policy templates are local JSON/YAML helpers. The simulator predicts the current
+on-chain policy order, but only `x402warden policy --template ...` updates the
+on-chain `PolicyAccount`.
+
 ### Path B — HTTP Proxy (zero code changes)
 
 ```bash
@@ -186,6 +235,13 @@ response = client.get("http://api.example.com/research")
 print(response.json())  # x402warden handled the payment
 ```
 
+Proxy responses include x402warden metadata headers after a payment:
+`x-x402warden-receipt`, `x-x402warden-delivery`, and
+`x-x402warden-auto-dispute` are base64url-encoded JSON artifacts.
+`x-x402warden-on-chain-evidence` is included when evidence recording is enabled.
+Policy blocks include `x-x402warden-blocked-receipt` when the proxy wallet can
+sign a `BlockedPaymentReceiptV1`.
+
 ### Configuration
 
 Both CLI and Proxy read from environment variables:
@@ -196,6 +252,14 @@ Both CLI and Proxy read from environment variables:
 | `SOLANA_RPC_URL` | Devnet | Solana RPC endpoint |
 | `AGENT_ID` | `0` | Which agent account to use |
 | `USDC_MINT` | Devnet USDC | USDC token mint address |
+| `X402WARDEN_PROXY_MAX_AMOUNT` | unset | Optional proxy max payment in micro-USDC; blocks higher 402 prices with a signed blocked receipt |
+| `X402WARDEN_PROXY_TIMEOUT_MS` | unset | Optional timeout for initial and paid retry HTTP requests |
+| `X402WARDEN_PROXY_RETRIES` | unset | Additional retry attempts for transport failures/timeouts; HTTP error responses are not retried |
+| `X402WARDEN_PROXY_EXPECT_JSON` | `false` | Require paid responses to parse as JSON for delivery checks |
+| `X402WARDEN_PROXY_EXPECT_NON_EMPTY` | `false` | Require paid responses to have a non-empty body |
+| `X402WARDEN_PROXY_AUTO_DISPUTE_ON_FAIL` | `false` | Open an on-chain dispute when objective paid delivery checks fail |
+| `X402WARDEN_PROXY_RECORD_EVIDENCE_ON_CHAIN` | `false` | Create a `PaymentEvidenceAccount` with receipt and delivery hashes after paid retry |
+| `X402WARDEN_PROXY_REQUIRE_EVIDENCE_ON_CHAIN` | `false` | Return an explicit protection failure if the evidence transaction is required but not recorded |
 
 > **What is a USDC Token Account?** On Solana, tokens live in separate "token accounts" linked to your wallet. Get free devnet USDC at [faucet.circle.com](https://faucet.circle.com) — it creates the account automatically. The `balance` command shows its address.
 
@@ -228,14 +292,14 @@ AGENT OWNER (you)
 │  ────────             │  ────────            │
 │  AgentAccount         │  PaymentEscrow       │
 │  PolicyAccount        │  DisputeAccount      │
-│  MerchantAllowlist    │  Auto-refund         │
+│  MerchantAllowlist    │  PaymentEvidence     │
 └──────────────────────┬──────────────────────┘
                        │ SPL Token transfers
                        ▼
               USDC on Solana Devnet
 ```
 
-### On-Chain Accounts (5 PDAs)
+### On-Chain Accounts (6 PDAs)
 
 | Account | Seeds | Purpose |
 |---|---|---|
@@ -244,10 +308,11 @@ AGENT OWNER (you)
 | `MerchantAllowlistAccount` | `["allowlist", agent, page]` | Approved merchants with overrides |
 | `PaymentEscrow` | `["payment", agent, id]` | Holds USDC during dispute window |
 | `DisputeAccount` | `["dispute", escrow]` | Dispute state + merchant deadline |
+| `PaymentEvidenceAccount` | `["payment_evidence", escrow]` | Optional receipt and delivery hash anchor |
 
-### Program Instructions (13)
+### Program Instructions (14)
 
-`initialize_agent` · `set_policy` · `create_allowlist` · `add_merchant` · `remove_merchant` · `process_payment` · `settle_payment` · `open_dispute` · `merchant_accept` · `merchant_contest` · `auto_refund` · `pause` · `unpause`
+`initialize_agent` · `set_policy` · `create_allowlist` · `add_merchant` · `remove_merchant` · `process_payment` · `record_payment_evidence` · `settle_payment` · `open_dispute` · `merchant_accept` · `merchant_contest` · `auto_refund` · `pause` · `unpause`
 
 For the full reference, see [docs/architecture.md](docs/architecture.md).
 
@@ -257,7 +322,7 @@ For the full reference, see [docs/architecture.md](docs/architecture.md).
 
 ```
 x402Warden-Solana/
-├── programs/x402warden/    # Anchor program (Rust) — 13 instructions, 5 accounts
+├── programs/x402warden/    # Anchor program (Rust) — 14 instructions, 6 accounts
 ├── sdk/                    # TypeScript SDK — client, PDA helpers, types
 ├── cli/                    # CLI tool — x402warden pay/init/policy/status/balance
 ├── proxy/                  # HTTP proxy — transparent x402 payment interception

@@ -15,6 +15,7 @@ node_modules/
 dist/
 .next/
 out/
+*.tsbuildinfo
 
 # Environment
 .env
@@ -46,13 +47,16 @@ test-ledger/
 skills-lock.json
 
 # Keypairs
+_local-secrets/
 keypair.json
 demo-keypair.json
+*keypair*.json
 *.keypair
 
-# Internal docs
+# Internal workspace notes
 _local-docs/
 PLAN-*.md
 DEMO-*.md
 VIDEO-*.md
 designs/
+.x402warden/

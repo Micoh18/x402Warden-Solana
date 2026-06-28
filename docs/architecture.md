@@ -2,6 +2,9 @@
 
 This document covers the full technical architecture of x402warden, including the account model, instruction set, payment flows, and dispute resolution.
 
+For deployment gates, security checklist, and mainnet controls, see
+[Production Readiness](./production-readiness.md).
+
 ---
 
 ## System Diagram
@@ -48,6 +51,7 @@ This document covers the full technical architecture of x402warden, including th
 |   - MerchantAllowlistAccount |                                |
 |   - PaymentEscrow            |                                |
 |   - DisputeAccount           |                                |
+|   - PaymentEvidenceAccount   |                                |
 +------------------------------+-------------------------------+
                                | SPL Token transfers
                                v
@@ -78,7 +82,7 @@ This document covers the full technical architecture of x402warden, including th
 
 ---
 
-## Account Model (5 PDA Types)
+## Account Model (6 PDA Types)
 
 ### 1. AgentAccount
 
@@ -180,6 +184,27 @@ Per-dispute state machine.
 
 **Seeds:** `["dispute", payment_escrow.key()]`
 
+### 6. PaymentEvidenceAccount
+
+Optional per-payment evidence anchor. Created only when CLI or MCP callers opt
+in to on-chain evidence recording after the paid retry.
+
+| Field | Type | Size | Description |
+|---|---|---|---|
+| `payment` | Pubkey | 32 | Back-reference to PaymentEscrow |
+| `recorder` | Pubkey | 32 | Owner wallet that recorded the evidence |
+| `receipt_version` | u8 | 1 | Receipt/evidence version, currently 1 |
+| `payment_requirements_hash` | [u8; 32] | 32 | Hash of x402 payment requirements observed by caller |
+| `request_context_hash` | [u8; 32] | 32 | Hash of URL, method, body hash, and headers hash |
+| `response_hash` | [u8; 32] | 32 | Hash of paid retry response body, or zero bytes |
+| `evidence_hash` | [u8; 32] | 32 | Hash of DeliveryEvidenceV1 |
+| `failure_code` | u8 | 1 | Compact delivery failure code; 0 means no failure |
+| `status_code` | u16 | 2 | HTTP status code, or 0 when no response exists |
+| `recorded_at` | i64 | 8 | Unix timestamp |
+| `bump` | u8 | 1 | PDA bump seed |
+
+**Seeds:** `["payment_evidence", payment_escrow.key()]`
+
 ---
 
 ## Instructions Reference
@@ -198,23 +223,24 @@ Per-dispute state machine.
 | # | Instruction | Signer | What it does |
 |---|---|---|---|
 | 5 | `process_x402_payment` | Owner | Validates policies, creates escrow PDA, transfers USDC to escrow |
-| 6 | `settle_payment` | Anyone | Releases escrowed funds to merchant (after dispute window) |
+| 6 | `record_payment_evidence` | Owner | Optionally records receipt and delivery hashes for a payment escrow |
+| 7 | `settle_payment` | Anyone | Releases escrowed funds to merchant (after dispute window) |
 
 ### Dispute Instructions
 
 | # | Instruction | Signer | What it does |
 |---|---|---|---|
-| 7 | `open_dispute` | Owner | Opens dispute before window expires, locks funds |
-| 8 | `merchant_accept_dispute` | Merchant | Merchant accepts, funds refunded to owner |
-| 9 | `merchant_contest_dispute` | Merchant | Merchant contests, dispute marked for resolution |
-| 10 | `auto_refund_dispute` | Anyone | If merchant missed 24h deadline, auto-refund to owner |
+| 8 | `open_dispute` | Owner | Opens dispute before window expires, locks funds |
+| 9 | `merchant_accept_dispute` | Merchant | Merchant accepts, funds refunded to owner |
+| 10 | `merchant_contest_dispute` | Merchant | Merchant contests, dispute marked for resolution |
+| 11 | `auto_refund_dispute` | Anyone | If merchant missed 24h deadline, auto-refund to owner |
 
 ### Admin Instructions
 
 | # | Instruction | Signer | What it does |
 |---|---|---|---|
-| 11 | `pause_agent` | Owner | Pauses all payments for this agent |
-| 12 | `unpause_agent` | Owner | Resumes payments |
+| 12 | `pause_agent` | Owner | Pauses all payments for this agent |
+| 13 | `unpause_agent` | Owner | Resumes payments |
 
 ---
 
@@ -261,6 +287,54 @@ Escrow holds funds for dispute_window_seconds (default: 300s)
           merchant_accept      merchant_contest     auto_refund (24h)
           (refund to owner)    (marked contested)   (refund to owner)
 ```
+
+---
+
+## Payment Decision Model
+
+x402warden should classify a payment in three stages:
+
+```text
+1. ShouldPay?
+   Runs before funds move.
+   Checks policy, amount, period budget, pause state, merchant allowlist,
+   and any caller-provided max amount.
+
+2. DidDeliver?
+   Runs after the protected request is retried with payment proof.
+   Checks whether the paid service objectively delivered a valid response.
+
+3. ShouldSettle?
+   Runs before escrow release.
+   Uses payment state and delivery/dispute evidence to decide whether funds
+   should settle, remain disputed, or be refunded.
+```
+
+`DidDeliver` is intentionally objective. Early versions should avoid subjective
+"AI judged this answer bad" arbitration and instead rely on machine-checkable
+failure signals:
+
+| Check | Good delivery | Failed delivery |
+|---|---|---|
+| HTTP status | `2xx` | non-`2xx` |
+| Timeout | response before deadline | request timeout |
+| Body | non-empty | empty response |
+| Format | valid expected format | invalid JSON / parse failure |
+| Schema | required fields present | missing fields / schema mismatch |
+| Service error | no explicit error | explicit error payload |
+| Evidence | response hash can be recorded | no reliable response evidence |
+
+A payment is therefore not considered fully good just because
+`process_x402_payment` succeeded. It is good when it passes policy, enters
+escrow, and the service passes `DidDeliver`. Failed `DidDeliver` results should
+feed the dispute path and the PaymentReceipt.
+
+Canonical `PaymentReceipt`, `PaymentDecision`, `DeliveryEvidence`, and
+`ProtectionMetric` shapes are documented in
+[`docs/protection-models.md`](./protection-models.md). Any UI, CLI, MCP, or
+proxy claim should also name its evidence source: on-chain account, on-chain
+event, signed off-chain record, caller-provided runtime data, local/dev-only
+state, or unavailable.
 
 ---
 

@@ -63,6 +63,22 @@ When `false`, settlement requires explicit action (not currently enforced differ
 
 ## Example Configurations
 
+The CLI can export these as local JSON/YAML templates:
+
+```bash
+npx x402warden policy-template export conservative --out policy.yaml --format yaml
+npx x402warden policy-template export exploration --format json
+```
+
+Templates are local planning artifacts. They do not enforce funds until applied
+with `x402warden policy --template policy.yaml`. Use `--dry-run` to inspect the
+resolved on-chain `PolicyAccount` fields without loading a wallet or sending a
+transaction:
+
+```bash
+npx x402warden policy --template policy.yaml --dry-run
+```
+
 ### Conservative (production agent, known services)
 
 ```typescript
@@ -232,3 +248,28 @@ await client.addMerchant(agentPda, page1, merchant33, 0, 0);
 ```
 
 For most use cases, a single page (32 merchants) is more than sufficient.
+
+---
+
+## Local Policy Simulator
+
+The simulator predicts whether a payment would pass a local template. It does
+not replace on-chain enforcement.
+
+```bash
+npx x402warden policy-template simulate policy.yaml \
+  --amount 1000000 \
+  --merchant Merchant111111111111111111111111111111111 \
+  --merchant-entry Merchant111111111111111111111111111111111
+```
+
+The simulator mirrors the current on-chain check order in
+`process_payment`:
+
+1. agent pause state,
+2. global `maxPerCall`,
+3. allowlist membership and merchant-specific override,
+4. period budget.
+
+Because the global per-call check happens before merchant overrides, an override
+does not permit payments above the global `maxPerCall` in the current program.
