@@ -787,6 +787,10 @@ const IDL =
           "name": "usdc_mint"
         },
         {
+          "name": "allowlist_account",
+          "optional": true
+        },
+        {
           "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
@@ -1119,6 +1123,122 @@ const IDL =
         }
       ],
       "args": []
+    },
+    {
+      "name": "record_payment_evidence",
+      "discriminator": [
+        173,
+        210,
+        131,
+        150,
+        135,
+        34,
+        107,
+        170
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "agent_account"
+          ]
+        },
+        {
+          "name": "agent_account"
+        },
+        {
+          "name": "payment_escrow"
+        },
+        {
+          "name": "payment_evidence",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  101,
+                  118,
+                  105,
+                  100,
+                  101,
+                  110,
+                  99,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "payment_escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "receipt_version",
+          "type": "u8"
+        },
+        {
+          "name": "payment_requirements_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "request_context_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "response_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "evidence_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "failure_code",
+          "type": "u8"
+        },
+        {
+          "name": "status_code",
+          "type": "u16"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -1185,6 +1305,19 @@ const IDL =
         127,
         81,
         175
+      ]
+    },
+    {
+      "name": "PaymentEvidenceAccount",
+      "discriminator": [
+        90,
+        50,
+        254,
+        227,
+        183,
+        110,
+        190,
+        213
       ]
     }
   ],
@@ -1318,6 +1451,19 @@ const IDL =
         245,
         161
       ]
+    },
+    {
+      "name": "PaymentEvidenceRecorded",
+      "discriminator": [
+        141,
+        130,
+        128,
+        3,
+        23,
+        52,
+        152,
+        229
+      ]
     }
   ],
   "errors": [
@@ -1405,6 +1551,16 @@ const IDL =
       "code": 6016,
       "name": "InvalidReasonCode",
       "msg": "Invalid dispute reason code"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidReceiptVersion",
+      "msg": "Invalid receipt version"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidDeliveryFailureCode",
+      "msg": "Invalid delivery failure code"
     }
   ],
   "types": [
@@ -1939,6 +2095,111 @@ const IDL =
           {
             "name": "auto_settle_enabled",
             "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentEvidenceAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "payment",
+            "type": "pubkey"
+          },
+          {
+            "name": "recorder",
+            "type": "pubkey"
+          },
+          {
+            "name": "receipt_version",
+            "type": "u8"
+          },
+          {
+            "name": "payment_requirements_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "request_context_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "response_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "evidence_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "failure_code",
+            "type": "u8"
+          },
+          {
+            "name": "status_code",
+            "type": "u16"
+          },
+          {
+            "name": "recorded_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentEvidenceRecorded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "payment",
+            "type": "pubkey"
+          },
+          {
+            "name": "evidence",
+            "type": "pubkey"
+          },
+          {
+            "name": "evidence_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "failure_code",
+            "type": "u8"
+          },
+          {
+            "name": "status_code",
+            "type": "u16"
           }
         ]
       }

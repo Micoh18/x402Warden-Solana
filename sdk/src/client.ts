@@ -17,6 +17,7 @@ import {
   findAllowlistAccountPda,
   findPaymentEscrowPda,
   findDisputeAccountPda,
+  findPaymentEvidencePda,
   findEscrowTokenAccountPda,
 } from "./pda";
 import type {
@@ -25,14 +26,25 @@ import type {
   MerchantAllowlistAccount,
   PaymentEscrowAccount,
   DisputeAccount,
+  PaymentEvidenceAccount,
+  RecordPaymentEvidenceParams,
   SetPolicyParams,
 } from "./types";
+import {
+  DELIVERY_FAILURE_NONE,
+  RECEIPT_VERSION_V1,
+} from "./constants";
 import IDL from "./idl";
 
 export interface X402WardenClientConfig {
   connection: Connection;
   wallet: Wallet;
   programId?: PublicKey;
+}
+
+export interface ProcessPaymentOptions {
+  allowlistAccount?: PublicKey | null;
+  allowlistPage?: number;
 }
 
 export class X402WardenClient {
@@ -49,6 +61,15 @@ export class X402WardenClient {
   }
 
   // ── Instructions ──
+
+  private hashBytes32(value: number[] | Uint8Array | undefined): number[] {
+    const bytes = value ? Array.from(value) : [];
+    if (bytes.length > 32) {
+      throw new Error("hash fields must be 32 bytes");
+    }
+    while (bytes.length < 32) bytes.push(0);
+    return bytes;
+  }
 
   async createAgent(
     agentId: BN | number,
@@ -153,11 +174,13 @@ export class X402WardenClient {
     merchant: PublicKey,
     x402RequestHash: number[] | Uint8Array,
     userTokenAccount: PublicKey,
-    usdcMint: PublicKey
+    usdcMint: PublicKey,
+    options: ProcessPaymentOptions = {}
   ): Promise<string> {
     const agentData = await this.getAgent(agentPda);
     const paymentCount = agentData.paymentCount;
     const [policyPda] = findPolicyAccountPda(agentPda, this.programId);
+    const policyData = await this.getPolicy(policyPda);
     const [paymentEscrowPda] = findPaymentEscrowPda(
       agentPda,
       paymentCount,
@@ -167,6 +190,16 @@ export class X402WardenClient {
       paymentEscrowPda,
       this.programId
     );
+    const allowlistAccount =
+      options.allowlistAccount !== undefined
+        ? options.allowlistAccount
+        : policyData.allowlistEnabled
+          ? findAllowlistAccountPda(
+              agentPda,
+              options.allowlistPage ?? 0,
+              this.programId
+            )[0]
+          : null;
 
     return this.program.methods
       .processX402Payment(
@@ -182,10 +215,11 @@ export class X402WardenClient {
         userTokenAccount,
         escrowTokenAccount: escrowTokenPda,
         usdcMint,
+        allowlistAccount,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
         rent: SYSVAR_RENT_PUBKEY,
-      })
+      } as any)
       .rpc();
   }
 
@@ -230,6 +264,36 @@ export class X402WardenClient {
         paymentEscrow: escrowPda,
         disputeAccount: disputePda,
         owner: agentData.owner,
+        systemProgram: SystemProgram.programId,
+      })
+      .rpc();
+  }
+
+  async recordPaymentEvidence(
+    agentPda: PublicKey,
+    escrowPda: PublicKey,
+    params: RecordPaymentEvidenceParams
+  ): Promise<string> {
+    const [paymentEvidencePda] = findPaymentEvidencePda(
+      escrowPda,
+      this.programId
+    );
+
+    return this.program.methods
+      .recordPaymentEvidence(
+        params.receiptVersion ?? RECEIPT_VERSION_V1,
+        this.hashBytes32(params.paymentRequirementsHash),
+        this.hashBytes32(params.requestContextHash),
+        this.hashBytes32(params.responseHash),
+        this.hashBytes32(params.evidenceHash),
+        params.failureCode ?? DELIVERY_FAILURE_NONE,
+        params.statusCode ?? 0
+      )
+      .accounts({
+        owner: this.provider.wallet.publicKey,
+        agentAccount: agentPda,
+        paymentEscrow: escrowPda,
+        paymentEvidence: paymentEvidencePda,
         systemProgram: SystemProgram.programId,
       })
       .rpc();
@@ -344,5 +408,10 @@ export class X402WardenClient {
   async getDispute(pda: PublicKey): Promise<DisputeAccount> {
     const acc = (this.program.account as any)["disputeAccount"];
     return acc.fetch(pda) as Promise<DisputeAccount>;
+  }
+
+  async getPaymentEvidence(pda: PublicKey): Promise<PaymentEvidenceAccount> {
+    const acc = (this.program.account as any)["paymentEvidenceAccount"];
+    return acc.fetch(pda) as Promise<PaymentEvidenceAccount>;
   }
 }

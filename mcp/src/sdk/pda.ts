@@ -7,6 +7,7 @@ import {
   ALLOWLIST_SEED,
   PAYMENT_SEED,
   DISPUTE_SEED,
+  PAYMENT_EVIDENCE_SEED,
   ESCROW_TOKEN_SEED,
 } from "./constants.js";
 
@@ -68,6 +69,16 @@ export function findDisputeAccountPda(
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [DISPUTE_SEED, paymentEscrow.toBuffer()],
+    programId
+  );
+}
+
+export function findPaymentEvidencePda(
+  paymentEscrow: PublicKey,
+  programId: PublicKey = PROGRAM_ID
+): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync(
+    [PAYMENT_EVIDENCE_SEED, paymentEscrow.toBuffer()],
     programId
   );
 }

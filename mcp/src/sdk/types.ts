@@ -86,6 +86,20 @@ export interface DisputeAccount {
   bump: number;
 }
 
+export interface PaymentEvidenceAccount {
+  payment: PublicKey;
+  recorder: PublicKey;
+  receiptVersion: number;
+  paymentRequirementsHash: number[];
+  requestContextHash: number[];
+  responseHash: number[];
+  evidenceHash: number[];
+  failureCode: number;
+  statusCode: number;
+  recordedAt: BN;
+  bump: number;
+}
+
 // ── Instruction params ──
 
 export interface SetPolicyParams {
@@ -95,4 +109,14 @@ export interface SetPolicyParams {
   disputeWindowSeconds: number;
   allowlistEnabled: boolean;
   autoSettleEnabled: boolean;
+}
+
+export interface RecordPaymentEvidenceParams {
+  receiptVersion?: number;
+  paymentRequirementsHash?: number[] | Uint8Array;
+  requestContextHash?: number[] | Uint8Array;
+  responseHash?: number[] | Uint8Array;
+  evidenceHash: number[] | Uint8Array;
+  failureCode?: number;
+  statusCode?: number;
 }
