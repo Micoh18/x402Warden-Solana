@@ -23,6 +23,20 @@ export function policyBlock(
   process.exit(1);
 }
 
+export function protectionFailure(
+  reason: string,
+  data: Record<string, unknown> = {}
+): never {
+  console.error(
+    JSON.stringify({
+      status: "protection_failed",
+      reason,
+      ...data,
+    })
+  );
+  process.exit(2);
+}
+
 export function error(msg: string): never {
   console.error(JSON.stringify({ status: "error", error: msg }));
   process.exit(2);

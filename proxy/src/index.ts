@@ -31,7 +31,12 @@ function main() {
     config.programId
   );
 
-  const server = createProxyServer(client, agentPda, config.usdcMint);
+  const server = createProxyServer(client, agentPda, config.usdcMint, {
+    signer: config.wallet.publicKey,
+    secretKey: config.keypair.secretKey,
+    agentId: config.agentId,
+    ...config.protection,
+  });
 
   server.listen(port, () => {
     const walletAddr = config.wallet.publicKey.toBase58();
@@ -41,6 +46,16 @@ function main() {
       `    Wallet:  ${walletAddr}`,
       `    RPC:     ${config.connection.rpcEndpoint}`,
       `    Agent:   ${agentPda.toBase58()}`,
+      `    Checks:  json=${config.protection.expectJson} nonEmpty=${config.protection.expectNonEmpty}`,
+      `    Timeout: ${
+        config.protection.timeoutMs != null
+          ? `${config.protection.timeoutMs}ms`
+          : "none"
+      }`,
+      `    Retries: ${config.protection.retries ?? 0}`,
+      `    Auto dispute: ${config.protection.autoDisputeOnFail}`,
+      `    On-chain evidence: ${config.protection.recordEvidenceOnChain}`,
+      `    Require evidence: ${config.protection.requireEvidenceOnChain}`,
       "",
       "  Usage:",
       `    curl -x http://localhost:${port} http://target/api`,

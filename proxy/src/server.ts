@@ -2,7 +2,7 @@ import * as http from "http";
 import * as net from "net";
 import { PublicKey } from "@solana/web3.js";
 import { X402WardenClient } from "@x402warden/sdk";
-import { interceptRequest } from "./interceptor";
+import { interceptRequest, type InterceptOptions } from "./interceptor";
 import { log, errorLog } from "./logger";
 
 function readBody(req: http.IncomingMessage): Promise<Buffer> {
@@ -40,10 +40,19 @@ function resolveTargetUrl(req: http.IncomingMessage): string | null {
   return null;
 }
 
+function encodeArtifactHeader(value: unknown): string {
+  return Buffer.from(JSON.stringify(value), "utf-8")
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
 export function createProxyServer(
   client: X402WardenClient,
   agentPda: PublicKey,
-  usdcMint: PublicKey
+  usdcMint: PublicKey,
+  interceptOptions: InterceptOptions = {}
 ): http.Server {
   const server = http.createServer(async (req, res) => {
     const targetUrl = resolveTargetUrl(req);
@@ -70,7 +79,8 @@ export function createProxyServer(
         body.length > 0 ? body : undefined,
         client,
         agentPda,
-        usdcMint
+        usdcMint,
+        interceptOptions
       );
 
       const outHeaders = { ...result.headers };
@@ -83,6 +93,38 @@ export function createProxyServer(
         }
         if (result.amountPaid !== undefined) {
           outHeaders["x-x402warden-amount"] = String(result.amountPaid);
+        }
+        if (result.receipt) {
+          outHeaders["x-x402warden-receipt"] = encodeArtifactHeader(result.receipt);
+        }
+        if (result.delivery) {
+          outHeaders["x-x402warden-delivery"] = encodeArtifactHeader(result.delivery);
+          outHeaders["x-x402warden-delivery-status"] = result.delivery.delivered
+            ? "delivered"
+            : "failed";
+        }
+        if (result.autoDispute) {
+          outHeaders["x-x402warden-auto-dispute"] = encodeArtifactHeader(
+            result.autoDispute
+          );
+        }
+        if (result.onChainEvidence) {
+          outHeaders["x-x402warden-on-chain-evidence"] = encodeArtifactHeader(
+            result.onChainEvidence
+          );
+        }
+      }
+
+      if (result.blockedSource) {
+        outHeaders["x-x402warden-blocked"] = "true";
+        outHeaders["x-x402warden-blocked-source"] = result.blockedSource;
+        if (result.blockReason) {
+          outHeaders["x-x402warden-blocked-reason"] = result.blockReason;
+        }
+        if (result.blockedReceipt) {
+          outHeaders["x-x402warden-blocked-receipt"] = encodeArtifactHeader(
+            result.blockedReceipt
+          );
         }
       }
 
