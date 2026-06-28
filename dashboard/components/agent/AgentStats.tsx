@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import BN from "bn.js";
 import { Card, CardContent } from "@/components/ui/card";
-import { lamportsToUsdc, bnToNumber, getPaymentStateKey } from "@/lib/utils";
-import type { AgentAccount } from "@x402warden/sdk";
+import { lamportsToUsdc } from "@/lib/utils";
+import {
+  buildProtectionMetricsV1,
+  findProtectionMetric,
+  type AgentAccount,
+} from "@x402warden/sdk";
 import type { PaymentWithPda } from "@/hooks/usePayments";
 import { SolarIcon } from "@/components/ui/icon";
 
@@ -13,45 +17,19 @@ interface AgentStatsProps {
   payments?: PaymentWithPda[];
 }
 
-const BLOCKED_USDC_STORAGE_KEY = "x402warden.demo.usdcBlocked";
-
-export function AgentStats({ agent, payments = [] }: AgentStatsProps) {
-  const [blockedAmount, setBlockedAmount] = useState(0);
-
-  useEffect(() => {
-    const raw = window.localStorage.getItem(BLOCKED_USDC_STORAGE_KEY);
-    const parsed = raw == null ? 0 : Number(raw);
-    setBlockedAmount(Number.isFinite(parsed) ? parsed : 0);
-  }, []);
-
-  const protectedAmount = useMemo(
-    () =>
-      payments.reduce(
-        (total, payment) => total.add(payment.account.amount),
-        new BN(0)
-      ),
+export function AgentStats({ payments = [] }: AgentStatsProps) {
+  const protection = useMemo(
+    () => buildProtectionMetricsV1({ payments }),
     [payments]
   );
-
-  const activeEscrow = useMemo(() => {
-    const active = payments.filter((payment) => {
-      const state = getPaymentStateKey(payment.account.state);
-      return state === "pending" || state === "disputed";
-    });
-    return {
-      count: active.length,
-      amount: active.reduce(
-        (total, payment) => total.add(payment.account.amount),
-        new BN(0)
-      ),
-    };
-  }, [payments]);
+  const blockedMetric = findProtectionMetric(protection, "usdc_blocked");
+  const blockedUnavailable = blockedMetric?.status === "unavailable";
 
   const stats = [
     {
       label: "USDC protected",
-      value: `$${lamportsToUsdc(protectedAmount)}`,
-      detail: `${payments.length} escrowed payment${payments.length === 1 ? "" : "s"}`,
+      value: `$${lamportsToUsdc(new BN(protection.amounts.usdcProtected))}`,
+      detail: `${protection.counts.paymentEscrows} escrowed payment${protection.counts.paymentEscrows === 1 ? "" : "s"}`,
       iconName: "shield",
       color: "text-warden-lichen",
       bgColor: "bg-warden-lichen/8",
@@ -59,11 +37,13 @@ export function AgentStats({ agent, payments = [] }: AgentStatsProps) {
     },
     {
       label: "USDC blocked",
-      value: `$${blockedAmount.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 6,
-      })}`,
-      detail: "Demo/local metric",
+      value: blockedUnavailable
+        ? "Unavailable"
+        : `$${lamportsToUsdc(new BN(protection.amounts.usdcBlocked))}`,
+      detail:
+        blockedMetric?.status === "available"
+          ? `${protection.counts.blockedReceipts} signed receipt${protection.counts.blockedReceipts === 1 ? "" : "s"}`
+          : "No signed block receipts yet",
       iconName: "shield-off",
       color: "text-warden-soul",
       bgColor: "bg-warden-soul/5",
@@ -71,8 +51,8 @@ export function AgentStats({ agent, payments = [] }: AgentStatsProps) {
     },
     {
       label: "USDC recovered",
-      value: `$${lamportsToUsdc(agent.totalDisputedLifetime)}`,
-      detail: "Disputed lifetime proxy",
+      value: `$${lamportsToUsdc(new BN(protection.amounts.usdcRecovered))}`,
+      detail: `${protection.counts.recoveredEscrows} refunded escrow${protection.counts.recoveredEscrows === 1 ? "" : "s"}`,
       iconName: "alert-triangle",
       color: "text-warden-soul",
       bgColor: "bg-warden-soul/5",
@@ -80,8 +60,8 @@ export function AgentStats({ agent, payments = [] }: AgentStatsProps) {
     },
     {
       label: "Active escrow",
-      value: bnToNumber(new BN(activeEscrow.count)).toString(),
-      detail: `$${lamportsToUsdc(activeEscrow.amount)} pending/disputed`,
+      value: protection.counts.activeEscrows.toString(),
+      detail: `$${lamportsToUsdc(new BN(protection.amounts.activeEscrow))} pending/disputed`,
       iconName: "lock",
       color: "text-warden-bone",
       bgColor: "bg-warden-bone/6",

@@ -411,20 +411,24 @@ response = client.get(<span className="text-green-400">&quot;http://api.example.
                     <SolarIcon name="hexagon" size={20} className="text-warden-soul-light" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-semibold text-warden-soul-light uppercase tracking-wider">6 Tools</span>
+                    <span className="text-[10px] font-semibold text-warden-soul-light uppercase tracking-wider">10 Tools</span>
                     <h4 className="text-base font-semibold text-white">What Your Agent Gets</h4>
                   </div>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed">
-                  Full on-chain wallet management through natural language.
+                  On-chain payment management through natural language.
                   No SDK code required.
                 </p>
               </div>
               <div className="border-t border-white/[0.06] p-4 space-y-2">
                 {[
                   { tool: "x402_pay", desc: "Pay an x402 service and return the response" },
+                  { tool: "x402_receipt", desc: "Fetch receipts from existing escrows" },
                   { tool: "x402_balance", desc: "Check SOL and USDC balances" },
                   { tool: "x402_status", desc: "View agent account and policy on-chain" },
+                  { tool: "x402_explain_block", desc: "Explain blocked payments before escrow" },
+                  { tool: "x402_spend_report", desc: "Report protected escrow and refund metrics" },
+                  { tool: "x402_merchant_score", desc: "Profile merchant risk from escrow history" },
                   { tool: "x402_init", desc: "Create a new agent account" },
                   { tool: "x402_set_policy", desc: "Set spending limits and rules" },
                   { tool: "x402_settle", desc: "Settle payment after dispute window" },
