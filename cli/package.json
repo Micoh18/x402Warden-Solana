@@ -15,7 +15,8 @@
     "@solana/web3.js": "^1.95.0",
     "@x402warden/sdk": "*",
     "bn.js": "^5.2.1",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "yaml": "^2.4.2"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.5",

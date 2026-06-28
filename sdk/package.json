@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.0",
+    "@noble/curves": "^1.9.7",
+    "@noble/hashes": "^1.8.0",
     "@solana/web3.js": "^1.95.0",
     "@solana/spl-token": "^0.4.0",
     "bn.js": "^5.2.1"
