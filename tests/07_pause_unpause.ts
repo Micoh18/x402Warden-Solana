@@ -88,6 +88,7 @@ describe("07 - Pause / Unpause", () => {
           userTokenAccount,
           escrowTokenAccount: escrowTokenPda,
           usdcMint,
+          allowlistAccount: null,
         })
         .rpc(),
       "AgentPaused"

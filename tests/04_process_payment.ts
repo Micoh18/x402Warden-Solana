@@ -82,6 +82,7 @@ describe("04 - Process Payment", () => {
         userTokenAccount,
         escrowTokenAccount: escrowTokenPda,
         usdcMint,
+        allowlistAccount: null,
       })
       .rpc();
 

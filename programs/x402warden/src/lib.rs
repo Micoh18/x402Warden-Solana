@@ -66,6 +66,28 @@ pub mod x402_warden {
         instructions::open_dispute::handler(ctx, reason_code, reason_uri)
     }
 
+    pub fn record_payment_evidence(
+        ctx: Context<RecordPaymentEvidence>,
+        receipt_version: u8,
+        payment_requirements_hash: [u8; 32],
+        request_context_hash: [u8; 32],
+        response_hash: [u8; 32],
+        evidence_hash: [u8; 32],
+        failure_code: u8,
+        status_code: u16,
+    ) -> Result<()> {
+        instructions::record_payment_evidence::handler(
+            ctx,
+            receipt_version,
+            payment_requirements_hash,
+            request_context_hash,
+            response_hash,
+            evidence_hash,
+            failure_code,
+            status_code,
+        )
+    }
+
     pub fn merchant_accept_dispute(ctx: Context<MerchantAccept>) -> Result<()> {
         instructions::merchant_accept::handler(ctx)
     }

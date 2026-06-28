@@ -53,6 +53,15 @@ pub struct DisputeOpened {
 }
 
 #[event]
+pub struct PaymentEvidenceRecorded {
+    pub payment: Pubkey,
+    pub evidence: Pubkey,
+    pub evidence_hash: [u8; 32],
+    pub failure_code: u8,
+    pub status_code: u16,
+}
+
+#[event]
 pub struct DisputeResolved {
     pub dispute: Pubkey,
     pub payment: Pubkey,

@@ -81,6 +81,7 @@ describe("06 - Dispute Flow", () => {
         userTokenAccount,
         escrowTokenAccount: escrowTokenPda,
         usdcMint,
+        allowlistAccount: null,
       })
       .rpc();
 

@@ -20,6 +20,7 @@ pub struct AddMerchant<'info> {
         mut,
         seeds = [ALLOWLIST_SEED, agent_account.key().as_ref(), &allowlist_account.page_index.to_le_bytes()],
         bump = allowlist_account.bump,
+        constraint = allowlist_account.agent == agent_account.key() @ ErrorCode::Unauthorized,
     )]
     pub allowlist_account: Account<'info, MerchantAllowlistAccount>,
 
@@ -27,6 +28,7 @@ pub struct AddMerchant<'info> {
         mut,
         seeds = [POLICY_SEED, agent_account.key().as_ref()],
         bump = policy_account.bump,
+        constraint = policy_account.agent == agent_account.key() @ ErrorCode::Unauthorized,
     )]
     pub policy_account: Account<'info, PolicyAccount>,
 

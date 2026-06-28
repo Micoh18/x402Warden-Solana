@@ -19,6 +19,7 @@ pub struct MerchantAccept<'info> {
     #[account(
         mut,
         constraint = dispute_account.state == DisputeState::Open @ ErrorCode::InvalidPaymentState,
+        constraint = dispute_account.payment == payment_escrow.key() @ ErrorCode::Unauthorized,
         seeds = [DISPUTE_SEED, payment_escrow.key().as_ref()],
         bump = dispute_account.bump,
     )]
@@ -26,19 +27,25 @@ pub struct MerchantAccept<'info> {
 
     #[account(
         mut,
+        constraint = agent_account.key() == payment_escrow.agent,
+    )]
+    pub agent_account: Account<'info, AgentAccount>,
+
+    #[account(
+        mut,
+        constraint = escrow_token_account.key() == payment_escrow.escrow_token_account @ ErrorCode::Unauthorized,
+        constraint = escrow_token_account.owner == payment_escrow.key() @ ErrorCode::Unauthorized,
         seeds = [ESCROW_TOKEN_SEED, payment_escrow.key().as_ref()],
         bump,
     )]
     pub escrow_token_account: Account<'info, TokenAccount>,
 
-    #[account(mut)]
-    pub owner_token_account: Account<'info, TokenAccount>,
-
     #[account(
         mut,
-        constraint = agent_account.key() == payment_escrow.agent,
+        constraint = owner_token_account.owner == agent_account.owner @ ErrorCode::Unauthorized,
+        constraint = owner_token_account.mint == escrow_token_account.mint,
     )]
-    pub agent_account: Account<'info, AgentAccount>,
+    pub owner_token_account: Account<'info, TokenAccount>,
 
     pub token_program: Program<'info, Token>,
 }
@@ -75,7 +82,10 @@ pub fn handler(ctx: Context<MerchantAccept>) -> Result<()> {
     escrow.state = PaymentState::Refunded;
 
     let agent = &mut ctx.accounts.agent_account;
-    agent.total_disputed_lifetime += escrow.amount;
+    agent.total_disputed_lifetime = agent
+        .total_disputed_lifetime
+        .checked_add(escrow.amount)
+        .ok_or(ErrorCode::Overflow)?;
 
     emit!(DisputeResolved {
         dispute: dispute.key(),

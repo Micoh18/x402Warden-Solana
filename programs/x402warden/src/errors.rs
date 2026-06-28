@@ -36,4 +36,8 @@ pub enum ErrorCode {
     InvalidDisputeWindow,
     #[msg("Invalid dispute reason code")]
     InvalidReasonCode,
+    #[msg("Invalid receipt version")]
+    InvalidReceiptVersion,
+    #[msg("Invalid delivery failure code")]
+    InvalidDeliveryFailureCode,
 }

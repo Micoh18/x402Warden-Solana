@@ -91,6 +91,7 @@ describe("09 - Auto Refund Dispute", () => {
         userTokenAccount,
         escrowTokenAccount: escrowTokenPda,
         usdcMint,
+        allowlistAccount: null,
       })
       .rpc();
 

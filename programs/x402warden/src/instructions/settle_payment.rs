@@ -18,6 +18,8 @@ pub struct SettlePayment<'info> {
 
     #[account(
         mut,
+        constraint = escrow_token_account.key() == payment_escrow.escrow_token_account @ ErrorCode::Unauthorized,
+        constraint = escrow_token_account.owner == payment_escrow.key() @ ErrorCode::Unauthorized,
         seeds = [ESCROW_TOKEN_SEED, payment_escrow.key().as_ref()],
         bump,
     )]
@@ -26,6 +28,7 @@ pub struct SettlePayment<'info> {
     #[account(
         mut,
         constraint = merchant_token_account.owner == payment_escrow.merchant,
+        constraint = merchant_token_account.mint == escrow_token_account.mint,
     )]
     pub merchant_token_account: Account<'info, TokenAccount>,
 

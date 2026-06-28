@@ -6,6 +6,7 @@ import {
   getProvider,
   deriveAgentPda,
   derivePolicyPda,
+  deriveAllowlistPda,
   derivePaymentPda,
   deriveEscrowTokenPda,
   createUsdcMint,
@@ -24,6 +25,11 @@ describe("08 - Error Cases", () => {
   let policyPda: PublicKey;
   let usdcMint: PublicKey;
   let userTokenAccount: PublicKey;
+  let allowlistAgentPda: PublicKey;
+  let allowlistPolicyPda: PublicKey;
+  let allowlistPda: PublicKey;
+  let allowlistUserTokenAccount: PublicKey;
+  let allowlistedMerchant: PublicKey;
 
   before(async () => {
     // Use agent 1 (created in test 01, never used) for clean spending state
@@ -47,6 +53,75 @@ describe("08 - Error Cases", () => {
         owner,
         agentAccount: agentPda,
         policyAccount: policyPda,
+      })
+      .rpc();
+
+    [allowlistAgentPda] = deriveAgentPda(owner, 2, program.programId);
+    [allowlistPolicyPda] = derivePolicyPda(
+      allowlistAgentPda,
+      program.programId
+    );
+    [allowlistPda] = deriveAllowlistPda(
+      allowlistAgentPda,
+      0,
+      program.programId
+    );
+    allowlistedMerchant = Keypair.generate().publicKey;
+    allowlistUserTokenAccount = await createTokenAccount(
+      provider,
+      usdcMint,
+      owner
+    );
+    await mintTokens(
+      provider,
+      usdcMint,
+      allowlistUserTokenAccount,
+      100_000_000
+    );
+
+    await program.methods
+      .initializeAgentAccount(new anchor.BN(2))
+      .accountsPartial({
+        owner,
+        agentAccount: allowlistAgentPda,
+        policyAccount: allowlistPolicyPda,
+        usdcTokenAccount: allowlistUserTokenAccount,
+      })
+      .rpc();
+
+    await program.methods
+      .setPolicy({
+        maxPerCall: new anchor.BN(10_000_000),
+        maxPerPeriod: new anchor.BN(50_000_000),
+        periodSeconds: new anchor.BN(86400),
+        disputeWindowSeconds: 60,
+        allowlistEnabled: true,
+        autoSettleEnabled: true,
+      })
+      .accountsPartial({
+        owner,
+        agentAccount: allowlistAgentPda,
+        policyAccount: allowlistPolicyPda,
+      })
+      .rpc();
+
+    await program.methods
+      .createAllowlist(0)
+      .accountsPartial({
+        owner,
+        agentAccount: allowlistAgentPda,
+        allowlistAccount: allowlistPda,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    await program.methods
+      .addMerchantToAllowlist(allowlistedMerchant, 0, new anchor.BN(2_000_000))
+      .accountsPartial({
+        owner,
+        agentAccount: allowlistAgentPda,
+        allowlistAccount: allowlistPda,
+        policyAccount: allowlistPolicyPda,
       })
       .rpc();
   });
@@ -76,6 +151,7 @@ describe("08 - Error Cases", () => {
           userTokenAccount,
           escrowTokenAccount: escrowTokenPda,
           usdcMint,
+          allowlistAccount: null,
         })
         .rpc(),
       "ExceedsPerCallLimit"
@@ -113,6 +189,7 @@ describe("08 - Error Cases", () => {
           userTokenAccount,
           escrowTokenAccount: escrowTokenPda,
           usdcMint,
+          allowlistAccount: null,
         })
         .rpc();
     }
@@ -144,6 +221,7 @@ describe("08 - Error Cases", () => {
           userTokenAccount,
           escrowTokenAccount: escrowTokenPda,
           usdcMint,
+          allowlistAccount: null,
         })
         .rpc(),
       "ExceedsPeriodLimit"
@@ -171,6 +249,113 @@ describe("08 - Error Cases", () => {
         })
         .rpc(),
       "InvalidDisputeWindow"
+    );
+  });
+
+  it("MerchantNotInAllowlist: rejects when allowlist is enabled and merchant is absent", async () => {
+    const agent = await program.account.agentAccount.fetch(allowlistAgentPda);
+    const count = agent.paymentCount.toNumber();
+    const [paymentPda] = derivePaymentPda(
+      allowlistAgentPda,
+      count,
+      program.programId
+    );
+    const [escrowTokenPda] = deriveEscrowTokenPda(
+      paymentPda,
+      program.programId
+    );
+
+    await expectError(
+      program.methods
+        .processX402Payment(
+          new anchor.BN(1_000_000),
+          Keypair.generate().publicKey,
+          Array(32).fill(0)
+        )
+        .accountsPartial({
+          owner,
+          agentAccount: allowlistAgentPda,
+          policyAccount: allowlistPolicyPda,
+          paymentEscrow: paymentPda,
+          userTokenAccount: allowlistUserTokenAccount,
+          escrowTokenAccount: escrowTokenPda,
+          usdcMint,
+          allowlistAccount: allowlistPda,
+        } as any)
+        .rpc(),
+      "MerchantNotInAllowlist"
+    );
+  });
+
+  it("ExceedsMerchantLimit: enforces merchant-specific override", async () => {
+    const agent = await program.account.agentAccount.fetch(allowlistAgentPda);
+    const count = agent.paymentCount.toNumber();
+    const [paymentPda] = derivePaymentPda(
+      allowlistAgentPda,
+      count,
+      program.programId
+    );
+    const [escrowTokenPda] = deriveEscrowTokenPda(
+      paymentPda,
+      program.programId
+    );
+
+    await expectError(
+      program.methods
+        .processX402Payment(
+          new anchor.BN(3_000_000),
+          allowlistedMerchant,
+          Array(32).fill(0)
+        )
+        .accountsPartial({
+          owner,
+          agentAccount: allowlistAgentPda,
+          policyAccount: allowlistPolicyPda,
+          paymentEscrow: paymentPda,
+          userTokenAccount: allowlistUserTokenAccount,
+          escrowTokenAccount: escrowTokenPda,
+          usdcMint,
+          allowlistAccount: allowlistPda,
+        } as any)
+        .rpc(),
+      "ExceedsMerchantLimit"
+    );
+  });
+
+  it("allows an allowlisted merchant within override", async () => {
+    const agent = await program.account.agentAccount.fetch(allowlistAgentPda);
+    const count = agent.paymentCount.toNumber();
+    const [paymentPda] = derivePaymentPda(
+      allowlistAgentPda,
+      count,
+      program.programId
+    );
+    const [escrowTokenPda] = deriveEscrowTokenPda(
+      paymentPda,
+      program.programId
+    );
+
+    await program.methods
+      .processX402Payment(
+        new anchor.BN(1_000_000),
+        allowlistedMerchant,
+        Array(32).fill(0)
+      )
+      .accountsPartial({
+        owner,
+        agentAccount: allowlistAgentPda,
+        policyAccount: allowlistPolicyPda,
+        paymentEscrow: paymentPda,
+        userTokenAccount: allowlistUserTokenAccount,
+        escrowTokenAccount: escrowTokenPda,
+        usdcMint,
+        allowlistAccount: allowlistPda,
+      } as any)
+      .rpc();
+
+    const escrow = await program.account.paymentEscrow.fetch(paymentPda);
+    expect(escrow.merchant.toBase58()).to.equal(
+      allowlistedMerchant.toBase58()
     );
   });
 });

@@ -78,6 +78,7 @@ describe("05 - Settle Payment", () => {
         userTokenAccount,
         escrowTokenAccount: escrowTokenPda,
         usdcMint,
+        allowlistAccount: null,
       })
       .rpc();
   });

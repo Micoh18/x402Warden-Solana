@@ -22,6 +22,7 @@ pub struct ProcessPayment<'info> {
         mut,
         seeds = [POLICY_SEED, agent_account.key().as_ref()],
         bump = policy_account.bump,
+        constraint = policy_account.agent == agent_account.key() @ ErrorCode::Unauthorized,
     )]
     pub policy_account: Account<'info, PolicyAccount>,
 
@@ -37,6 +38,7 @@ pub struct ProcessPayment<'info> {
     #[account(
         mut,
         constraint = user_token_account.owner == owner.key(),
+        constraint = user_token_account.mint == usdc_mint.key(),
     )]
     pub user_token_account: Account<'info, TokenAccount>,
 
@@ -51,6 +53,12 @@ pub struct ProcessPayment<'info> {
     pub escrow_token_account: Account<'info, TokenAccount>,
 
     pub usdc_mint: Account<'info, token::Mint>,
+
+    #[account(
+        constraint = allowlist_account.agent == agent_account.key() @ ErrorCode::Unauthorized,
+    )]
+    pub allowlist_account: Option<Account<'info, MerchantAllowlistAccount>>,
+
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
@@ -68,6 +76,27 @@ pub fn handler(
 
     require!(!agent.paused, ErrorCode::AgentPaused);
     require!(amount <= policy.max_per_call, ErrorCode::ExceedsPerCallLimit);
+
+    if policy.allowlist_enabled {
+        let allowlist = ctx
+            .accounts
+            .allowlist_account
+            .as_ref()
+            .ok_or(ErrorCode::MerchantNotInAllowlist)?;
+
+        let merchant_entry = allowlist
+            .merchants
+            .iter()
+            .find(|entry| entry.merchant_pubkey == merchant)
+            .ok_or(ErrorCode::MerchantNotInAllowlist)?;
+
+        if merchant_entry.max_per_call_override > 0 {
+            require!(
+                amount <= merchant_entry.max_per_call_override,
+                ErrorCode::ExceedsMerchantLimit
+            );
+        }
+    }
 
     if clock.unix_timestamp - policy.period_start > policy.period_seconds as i64 {
         policy.period_start = clock.unix_timestamp;
@@ -93,12 +122,21 @@ pub fn handler(
     );
     token::transfer(transfer_ctx, amount)?;
 
-    policy.spent_in_period += amount;
+    policy.spent_in_period = policy
+        .spent_in_period
+        .checked_add(amount)
+        .ok_or(ErrorCode::Overflow)?;
 
     let agent = &mut ctx.accounts.agent_account;
     let payment_id = agent.payment_count;
-    agent.payment_count += 1;
-    agent.total_spent_lifetime += amount;
+    agent.payment_count = agent
+        .payment_count
+        .checked_add(1)
+        .ok_or(ErrorCode::Overflow)?;
+    agent.total_spent_lifetime = agent
+        .total_spent_lifetime
+        .checked_add(amount)
+        .ok_or(ErrorCode::Overflow)?;
 
     let escrow = &mut ctx.accounts.payment_escrow;
     escrow.agent = agent.key();

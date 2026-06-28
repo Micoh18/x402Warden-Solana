@@ -16,6 +16,7 @@ pub struct MerchantContest<'info> {
     #[account(
         mut,
         constraint = dispute_account.state == DisputeState::Open @ ErrorCode::InvalidPaymentState,
+        constraint = dispute_account.payment == payment_escrow.key() @ ErrorCode::Unauthorized,
         seeds = [DISPUTE_SEED, payment_escrow.key().as_ref()],
         bump = dispute_account.bump,
     )]
