@@ -67,8 +67,8 @@ export default function NewAgentPage() {
       <div className="animate-fade-in-up grid grid-cols-1 lg:grid-cols-2 gap-0" style={{
         borderRadius: "32px",
         overflow: "hidden",
-        border: "1px solid rgba(86, 255, 232, 0.1)",
-        boxShadow: "rgba(0, 0, 0, 0.6) 0px 40px 80px -20px, rgba(86, 255, 232, 0.08) 0px 0px 40px -10px",
+        border: "1px solid rgba(215, 227, 106, 0.1)",
+        boxShadow: "rgba(0, 0, 0, 0.6) 0px 40px 80px -20px, rgba(215, 227, 106, 0.08) 0px 0px 40px -10px",
       }}>
         <div className="relative h-[300px] lg:h-auto lg:min-h-[480px] overflow-hidden bg-warden-black">
           <WireframeGrid />
