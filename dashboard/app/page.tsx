@@ -33,7 +33,7 @@ import { ConnectButton } from "@/components/wallet/ConnectButton";
 import { footerGroups, landingLinks, mcpInstallCommand } from "@/data/landing";
 import { trackLandingEvent, type LandingEventProperties } from "@/lib/landing-analytics";
 
-type Tone = "teal" | "amber" | "red" | "green" | "blue" | "moss";
+type Tone = "teal" | "amber" | "red" | "green" | "blue" | "moss" | "gold";
 
 type IconCard = {
   title: string;
@@ -51,12 +51,23 @@ const sdkUrl = landingLinks.sdk;
 const dashboardUrl = landingLinks.dashboard;
 
 const toneStyles: Record<Tone, string> = {
-  teal: "border-warden-soul-light/30 bg-warden-soul-light/10 text-warden-soul-light",
-  amber: "border-[#D8B35E]/30 bg-[#D8B35E]/10 text-[#E3C46F]",
-  red: "border-[#E36C61]/30 bg-[#E36C61]/10 text-[#F08A7D]",
-  green: "border-[#93B978]/30 bg-[#93B978]/10 text-[#A9CB8A]",
-  blue: "border-warden-heart/30 bg-warden-heart/10 text-warden-heart",
-  moss: "border-warden-lichen/30 bg-warden-lichen/10 text-warden-lichen",
+  teal: "border-[#7CFFB2]/28 bg-[#7CFFB2]/8 text-[#B7F7D0]",
+  amber: "border-[#F5B84B]/30 bg-[#F5B84B]/10 text-[#F5B84B]",
+  red: "border-[#FF5C5C]/30 bg-[#FF5C5C]/10 text-[#FF7A7A]",
+  green: "border-[#7CFFB2]/28 bg-[#7CFFB2]/8 text-[#B7F7D0]",
+  blue: "border-[#63A8FF]/30 bg-[#63A8FF]/10 text-[#8EC2FF]",
+  moss: "border-[#A9B3AD]/26 bg-[#A9B3AD]/8 text-[#A9B3AD]",
+  gold: "border-[#D7C28A]/32 bg-[#D7C28A]/10 text-[#D7C28A]",
+};
+
+const activeScenarioStyles: Record<Tone, string> = {
+  teal: "border-[#7CFFB2]/35 bg-[#7CFFB2]/[0.07]",
+  amber: "border-[#F5B84B]/35 bg-[#F5B84B]/[0.08]",
+  red: "border-[#FF5C5C]/35 bg-[#FF5C5C]/[0.08]",
+  green: "border-[#7CFFB2]/35 bg-[#7CFFB2]/[0.07]",
+  blue: "border-[#63A8FF]/35 bg-[#63A8FF]/[0.08]",
+  moss: "border-[#A9B3AD]/28 bg-[#A9B3AD]/[0.06]",
+  gold: "border-[#D7C28A]/35 bg-[#D7C28A]/[0.08]",
 };
 
 const navItems = [
@@ -161,9 +172,11 @@ const metrics = [
     label: "USDC recovered",
     detail: "Refunded escrow, not open dispute totals.",
     source: "refunded escrow",
-    tone: "green" as const,
+    tone: "blue" as const,
   },
 ];
+
+const howStepTones: Tone[] = ["moss", "green", "amber", "gold", "blue"];
 
 const featureCards: IconCard[] = [
   {
@@ -176,31 +189,31 @@ const featureCards: IconCard[] = [
     title: "Per-payment escrow",
     copy: "Hold approved x402 payments in a PaymentEscrow PDA during the dispute window.",
     icon: LockKeyhole,
-    tone: "moss",
+    tone: "amber",
   },
   {
     title: "Dispute and refund path",
     copy: "Open disputes for failed delivery and recover funds when the merchant accepts or misses the deadline.",
     icon: RotateCcw,
-    tone: "green",
+    tone: "blue",
   },
   {
     title: "Receipts with evidence hashes",
     copy: "Build receipts from escrow accounts and attach delivery evidence hashes when callers record them.",
     icon: ReceiptText,
-    tone: "blue",
+    tone: "gold",
   },
   {
     title: "Spend observability",
     copy: "Report protected, active, settled, recovered, and blocked amounts with source labels.",
     icon: Gauge,
-    tone: "amber",
+    tone: "moss",
   },
   {
     title: "Agent-native integrations",
     copy: "Use the CLI, HTTP proxy, TypeScript SDK, or MCP server from the stack your agent already runs.",
     icon: Terminal,
-    tone: "blue",
+    tone: "moss",
   },
 ];
 
@@ -217,7 +230,7 @@ const scenarios = [
   {
     name: "Good payment",
     status: "Escrowed",
-    tone: "teal" as const,
+    tone: "amber" as const,
     prompt: "Agent calls an approved research API with a 5 USDC x402 quote.",
     result: "Policy passes, USDC moves into escrow, and the paid retry returns data.",
     metric: "+5 USDC protected",
@@ -226,7 +239,7 @@ const scenarios = [
   {
     name: "Bad service recovered",
     status: "Recovered",
-    tone: "green" as const,
+    tone: "blue" as const,
     prompt: "Agent pays an endpoint that returns malformed or empty data.",
     result: "Delivery check fails, dispute opens, and the refund path returns escrowed funds.",
     metric: "+5 USDC recovered",
@@ -303,7 +316,7 @@ const useCases: IconCard[] = [
     title: "Developer tools",
     copy: "Let agents pay per tool call while giving buyers a recovery path when the tool fails.",
     icon: Terminal,
-    tone: "amber",
+    tone: "moss",
   },
 ];
 
@@ -326,7 +339,7 @@ function SourceBadge({ children, tone }: { children: string; tone: Tone }) {
 
 function SectionEyebrow({ children }: { children: string }) {
   return (
-    <p className="font-mono text-xs uppercase tracking-[0.28em] text-warden-soul-light">
+    <p className="font-mono text-xs uppercase tracking-[0.28em] text-warden-muted">
       {children}
     </p>
   );
@@ -430,7 +443,7 @@ function LandingHeader() {
   return (
     <header
       className={cn(
-        "fixed left-0 right-0 top-0 z-50 border-b bg-[#090A0B]/90 backdrop-blur-xl transition-colors",
+        "fixed left-0 right-0 top-0 z-50 border-b bg-[#070A0E]/90 backdrop-blur-xl transition-colors",
         scrolled ? "border-warden-soul-light/20" : "border-white/10"
       )}
     >
@@ -484,7 +497,7 @@ function LandingHeader() {
                 cta_label: "Run demo",
               })
             }
-            className="inline-flex h-10 items-center gap-2 rounded-md border border-warden-soul-light/35 bg-warden-soul-light/10 px-4 text-sm font-semibold text-white transition hover:bg-warden-soul-light/15"
+            className="inline-flex h-10 items-center gap-2 rounded-md border border-white/15 bg-warden-text px-4 text-sm font-semibold text-warden-black transition hover:bg-warden-bone"
           >
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
             Run demo
@@ -504,7 +517,7 @@ function LandingHeader() {
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-[#090A0B] px-4 py-4 lg:hidden">
+        <div className="border-t border-white/10 bg-[#070A0E] px-4 py-4 lg:hidden">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => (
               <a
@@ -536,7 +549,7 @@ function LandingHeader() {
                     cta_label: "Run demo",
                   });
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-md border border-warden-soul-light/35 bg-warden-soul-light/10 px-3 py-2 text-sm font-semibold text-white"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-white/15 bg-warden-text px-3 py-2 text-sm font-semibold text-warden-black"
               >
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 Run demo
@@ -609,7 +622,7 @@ function FirewallConsole() {
           ))}
         </div>
       </div>
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(transparent_0,rgba(215,227,106,0.05)_1px,transparent_2px)] bg-[length:100%_24px] opacity-50" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(transparent_0,rgba(38,52,66,0.16)_1px,transparent_2px)] bg-[length:100%_24px] opacity-45" />
     </div>
   );
 }
@@ -617,8 +630,8 @@ function FirewallConsole() {
 function HeroSection() {
   return (
     <section id="top" className="relative overflow-hidden pt-20">
-      <div className="absolute inset-0 -z-10 bg-[#090A0B]" />
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(215,227,106,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(215,227,106,0.03)_1px,transparent_1px)] bg-[size:72px_72px]" />
+      <div className="absolute inset-0 -z-10 bg-[#070A0E]" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(38,52,66,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(38,52,66,0.12)_1px,transparent_1px)] bg-[size:72px_72px]" />
       <div className="mx-auto grid min-h-[82svh] w-full max-w-[100vw] gap-7 px-4 pb-6 pt-4 sm:px-6 lg:max-w-7xl lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:px-8 lg:pb-14 lg:pt-14">
         <div className="w-full max-w-[340px] sm:max-w-4xl lg:max-w-2xl">
           <div className="flex max-w-full flex-wrap gap-2">
@@ -647,7 +660,7 @@ function HeroSection() {
                   cta_label: "Run the demo",
                 })
               }
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-warden-soul-light/40 bg-warden-soul-light/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-warden-soul-light/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warden-soul-light/60"
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-white/15 bg-warden-text px-5 py-3 text-sm font-semibold text-warden-black transition hover:bg-warden-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warden-text/60"
             >
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
               Run the demo
@@ -699,7 +712,7 @@ function HeroSection() {
 
 function ProblemSection() {
   return (
-    <section className="border-t border-white/10 bg-[#111317] px-4 pb-16 pt-4 sm:px-6 md:py-20 lg:px-8">
+    <section className="border-t border-white/10 bg-[#0B1118] px-4 pb-16 pt-4 sm:px-6 md:py-20 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="problem"
@@ -753,7 +766,7 @@ function CategorySection() {
   ];
 
   return (
-    <section className="border-t border-white/10 bg-[#090A0B] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="border-t border-white/10 bg-[#070A0E] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="category"
@@ -800,7 +813,7 @@ function CategorySection() {
 
 function HowItWorksSection() {
   return (
-    <section id="how" className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+    <section id="how" className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="how it works"
@@ -811,7 +824,7 @@ function HowItWorksSection() {
           {howSteps.map((step, index) => (
             <article key={step.label} className="border border-white/10 bg-white/[0.03] p-5">
               <div className="flex items-center justify-between">
-                <SourceBadge tone={index === 4 ? "green" : "teal"}>{step.label}</SourceBadge>
+                <SourceBadge tone={howStepTones[index] ?? "moss"}>{step.label}</SourceBadge>
                 <span className="font-mono text-xs text-warden-dim">0{index + 1}</span>
               </div>
               <h3 className="mt-5 text-lg font-semibold text-white">{step.title}</h3>
@@ -823,7 +836,7 @@ function HowItWorksSection() {
           ))}
         </div>
         <details className="mt-8 border border-white/10 bg-black/25 p-5 text-sm text-warden-muted">
-          <summary className="cursor-pointer font-mono text-xs uppercase tracking-[0.2em] text-warden-soul-light">
+          <summary className="cursor-pointer font-mono text-xs uppercase tracking-[0.2em] text-warden-bone">
             Under the hood
           </summary>
           <p className="mt-4 leading-7">
@@ -837,7 +850,7 @@ function HowItWorksSection() {
 
 function MetricsSection() {
   return (
-    <section className="border-t border-white/10 bg-[#090A0B] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="border-t border-white/10 bg-[#070A0E] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="metrics"
@@ -866,7 +879,7 @@ function MetricsSection() {
 
 function FeatureSection() {
   return (
-    <section className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="capabilities"
@@ -910,7 +923,7 @@ function ReceiptSection() {
 }`;
 
   return (
-    <section id="receipts" className="border-t border-white/10 bg-[#090A0B] px-4 py-20 sm:px-6 lg:px-8">
+    <section id="receipts" className="border-t border-white/10 bg-[#070A0E] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
           <SectionEyebrow>receipts</SectionEyebrow>
@@ -933,7 +946,7 @@ function ReceiptSection() {
         <div className="border border-white/10 bg-black/35">
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-white">
-              <ReceiptText className="h-4 w-4 text-warden-soul-light" aria-hidden="true" />
+              <ReceiptText className="h-4 w-4 text-warden-bone" aria-hidden="true" />
               PaymentReceiptV1
             </div>
             <CopyCommand
@@ -956,7 +969,7 @@ function DemoSection() {
   const scenario = scenarios[active];
 
   return (
-    <section id="demo" className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+    <section id="demo" className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="demo"
@@ -978,9 +991,7 @@ function DemoSection() {
                 }}
                 className={cn(
                   "w-full border p-5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warden-soul-light/60",
-                  active === index
-                    ? "border-warden-soul-light/35 bg-warden-soul-light/[0.07]"
-                    : "border-white/10 bg-white/[0.03] hover:border-white/20"
+                  active === index ? activeScenarioStyles[item.tone] : "border-white/10 bg-white/[0.03] hover:border-white/20"
                 )}
               >
                 <div className="flex items-center justify-between gap-4">
@@ -1028,7 +1039,7 @@ function DemoSection() {
 
 function IntegrationsSection() {
   return (
-    <section className="border-t border-white/10 bg-[#090A0B] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="border-t border-white/10 bg-[#070A0E] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="integrations"
@@ -1089,7 +1100,7 @@ function IntegrationsSection() {
                         });
                       }
                     }}
-                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-warden-soul-light hover:text-white"
+                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-warden-bone hover:text-white"
                   >
                     {item.cta}
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -1113,7 +1124,7 @@ function IntegrationsSection() {
 
 function CompareSection() {
   return (
-    <section id="compare" className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+    <section id="compare" className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="compare"
@@ -1157,7 +1168,7 @@ function CompareSection() {
 
 function UseCasesSection() {
   return (
-    <section className="border-t border-white/10 bg-[#090A0B] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="border-t border-white/10 bg-[#070A0E] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="use cases"
@@ -1185,9 +1196,10 @@ function UseCasesSection() {
 
 function ArchitectureSection() {
   const nodes = ["AgentAccount", "PolicyAccount", "MerchantAllowlist", "PaymentEscrow", "DisputeAccount", "PaymentEvidence"];
+  const nodeTones: Tone[] = ["green", "green", "green", "amber", "blue", "gold"];
 
   return (
-    <section className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div>
           <SectionEyebrow>trust</SectionEyebrow>
@@ -1222,7 +1234,7 @@ function ArchitectureSection() {
             </a>
             <Link
               href={landingLinks.security}
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-warden-soul-light/35 bg-warden-soul-light/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-warden-soul-light/20"
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-white/15 bg-warden-text px-5 py-3 text-sm font-semibold text-warden-black transition hover:bg-warden-bone"
             >
               Security model
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -1232,7 +1244,7 @@ function ArchitectureSection() {
         <div className="grid gap-3">
           {nodes.map((node, index) => (
             <div key={node} className="grid grid-cols-[48px_1fr] items-center gap-4 border border-white/10 bg-black/25 p-4">
-              <div className="flex h-12 w-12 items-center justify-center border border-warden-soul-light/25 bg-warden-soul-light/10 font-mono text-sm text-warden-soul-light">
+              <div className={cn("flex h-12 w-12 items-center justify-center border font-mono text-sm", toneStyles[nodeTones[index] ?? "moss"])}>
                 {index + 1}
               </div>
               <div>
@@ -1263,7 +1275,7 @@ function RoadmapSection() {
   ];
 
   return (
-    <section className="border-t border-white/10 bg-[#090A0B] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="border-t border-white/10 bg-[#070A0E] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="roadmap"
@@ -1273,11 +1285,11 @@ function RoadmapSection() {
         <div className="mt-12 grid gap-4 lg:grid-cols-3">
           {lanes.map(([title, ...items], index) => (
             <article key={title} className="border border-white/10 bg-white/[0.03] p-6">
-              <SourceBadge tone={index === 0 ? "teal" : index === 1 ? "amber" : "blue"}>{title}</SourceBadge>
+              <SourceBadge tone={index === 0 ? "teal" : index === 1 ? "amber" : "moss"}>{title}</SourceBadge>
               <ul className="mt-6 space-y-3">
                 {items.map((item) => (
                   <li key={item} className="flex gap-3 text-sm text-warden-muted">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-warden-soul-light" aria-hidden="true" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-warden-bone" aria-hidden="true" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -1292,7 +1304,7 @@ function RoadmapSection() {
 
 function FinalCtaSection() {
   return (
-    <section className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+    <section className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl text-center">
         <SectionEyebrow>start</SectionEyebrow>
         <h2 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-6xl">
@@ -1320,7 +1332,7 @@ function FinalCtaSection() {
                 cta_label: "Run demo",
               })
             }
-            className="inline-flex items-center justify-center gap-2 rounded-md border border-warden-soul-light/40 bg-warden-soul-light/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-warden-soul-light/20"
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-white/15 bg-warden-text px-5 py-3 text-sm font-semibold text-warden-black transition hover:bg-warden-bone"
           >
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
             Run demo
@@ -1351,7 +1363,7 @@ function FinalCtaSection() {
 
 function LandingFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#090A0B] px-4 py-12 sm:px-6 lg:px-8">
+    <footer className="border-t border-white/10 bg-[#070A0E] px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1.2fr_2.4fr]">
         <div>
           <div className="flex items-center gap-3">
@@ -1420,7 +1432,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#090A0B] text-foreground">
+    <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#070A0E] text-foreground">
       <LandingHeader />
       <main>
         <HeroSection />

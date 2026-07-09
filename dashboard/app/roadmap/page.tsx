@@ -53,7 +53,7 @@ export default function RoadmapPage() {
           </div>
         </section>
 
-        <section className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+        <section className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
             <SectionHeading
               eyebrow="strategy"

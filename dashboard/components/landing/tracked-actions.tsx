@@ -84,7 +84,7 @@ export function CopyCommand({
       type="button"
       onClick={copy}
       className={cn(
-        "inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] text-sm text-warden-muted transition hover:border-warden-soul-light/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warden-soul-light/60",
+        "inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] text-sm text-warden-muted transition hover:border-[#7CFFB2]/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CFFB2]/60",
         compact ? "px-2.5 py-2" : "px-3 py-2"
       )}
       aria-label={label}

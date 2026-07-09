@@ -51,7 +51,7 @@ export default function SecurityPage() {
           </div>
         </section>
 
-        <section className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+        <section className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-3">
             <div>
               <SectionHeading
@@ -123,7 +123,7 @@ export default function SecurityPage() {
                 external
                 event="architecture_link_clicked"
                 eventProps={{ section: "security", cta_label: "Production readiness" }}
-                className="inline-flex items-center justify-center rounded-md border border-warden-soul-light/35 bg-warden-soul-light/10 px-5 py-3 text-sm font-semibold text-white hover:bg-warden-soul-light/20"
+                className="inline-flex items-center justify-center rounded-md border border-white/15 bg-warden-text px-5 py-3 text-sm font-semibold text-warden-black hover:bg-warden-bone"
               >
                 Production readiness
               </TrackedLink>

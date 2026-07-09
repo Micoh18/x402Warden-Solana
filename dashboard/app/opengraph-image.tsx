@@ -17,11 +17,11 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#090A0B",
-          color: "#EEF2E8",
+          background: "#070A0E",
+          color: "#F2F5F1",
           padding: 64,
           fontFamily: "sans-serif",
-          border: "1px solid #32382E",
+          border: "1px solid #263442",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
@@ -29,11 +29,11 @@ export default function OpenGraphImage() {
             style={{
               width: 42,
               height: 42,
-              border: "2px solid #DDEB73",
+              border: "2px solid #7CFFB2",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "#DDEB73",
+              color: "#7CFFB2",
               fontSize: 24,
               fontWeight: 700,
             }}
@@ -47,8 +47,8 @@ export default function OpenGraphImage() {
             style={{
               display: "flex",
               alignSelf: "flex-start",
-              border: "1px solid rgba(215,227,106,0.35)",
-              color: "#DDEB73",
+              border: "1px solid rgba(124,255,178,0.24)",
+              color: "#B7F7D0",
               padding: "8px 14px",
               fontSize: 20,
               letterSpacing: 2,
@@ -61,7 +61,7 @@ export default function OpenGraphImage() {
             Let AI agents pay without giving them a blank check.
           </div>
         </div>
-        <div style={{ display: "flex", gap: 16, color: "#9AA59A", fontSize: 24 }}>
+        <div style={{ display: "flex", gap: 16, color: "#A9B3AD", fontSize: 24 }}>
           <span>Policy checks before payment</span>
           <span>Escrow during delivery</span>
           <span>Recovery after failure</span>

@@ -117,7 +117,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
           </div>
         </article>
 
-        <section className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+        <section className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <SectionHeading
               eyebrow="next"
@@ -129,7 +129,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 href={landingLinks.demo}
                 event="hero_cta_run_demo_clicked"
                 eventProps={{ section: "blog_article", cta_label: "Open demo" }}
-                className="inline-flex rounded-md border border-warden-soul-light/35 bg-warden-soul-light/10 px-5 py-3 text-sm font-semibold text-white hover:bg-warden-soul-light/20"
+                className="inline-flex rounded-md border border-white/15 bg-warden-text px-5 py-3 text-sm font-semibold text-warden-black hover:bg-warden-bone"
               >
                 Open demo
               </TrackedLink>

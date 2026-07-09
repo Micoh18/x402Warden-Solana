@@ -53,7 +53,7 @@ export default function SpanishLandingPage() {
           </div>
         </section>
 
-        <section className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+        <section className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2">
             <div>
               <SectionHeading
@@ -87,7 +87,7 @@ export default function SpanishLandingPage() {
                   external
                   event="github_clicked"
                   eventProps={{ section: "spanish", cta_label: "Ver GitHub" }}
-                  className="inline-flex justify-center rounded-md border border-warden-soul-light/35 bg-warden-soul-light/10 px-5 py-3 text-sm font-semibold text-white hover:bg-warden-soul-light/20"
+                  className="inline-flex justify-center rounded-md border border-white/15 bg-warden-text px-5 py-3 text-sm font-semibold text-warden-black hover:bg-warden-bone"
                 >
                   Ver GitHub
                 </TrackedLink>

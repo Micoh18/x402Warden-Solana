@@ -35,7 +35,7 @@ export function DemoSimulator() {
             className={cn(
               "w-full border p-5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warden-soul-light/60",
               active === index
-                ? "border-warden-soul-light/35 bg-warden-soul-light/[0.07]"
+                ? "border-[#7CFFB2]/35 bg-[#7CFFB2]/[0.07]"
                 : "border-white/10 bg-white/[0.03] hover:border-white/20"
             )}
           >
@@ -90,7 +90,7 @@ export function DemoSimulator() {
               href="/integrate"
               event="cli_install_clicked"
               eventProps={{ section: "demo_page", cta_label: "Protect an agent" }}
-              className="inline-flex items-center justify-center gap-2 border border-white/10 p-4 text-sm font-semibold text-warden-soul-light transition hover:border-warden-soul-light/35 hover:text-white"
+              className="inline-flex items-center justify-center gap-2 border border-white/15 bg-warden-text p-4 text-sm font-semibold text-warden-black transition hover:bg-warden-bone"
             >
               Protect an agent
               <ArrowRight className="h-4 w-4" aria-hidden="true" />

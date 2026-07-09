@@ -6,15 +6,16 @@ import type { LandingEventName } from "@/lib/landing-analytics";
 import { MarketingHeader } from "./marketing-header";
 import { TrackedLink } from "./tracked-actions";
 
-export type Tone = "teal" | "amber" | "red" | "green" | "blue" | "moss";
+export type Tone = "teal" | "amber" | "red" | "green" | "blue" | "moss" | "gold";
 
 export const toneStyles: Record<Tone, string> = {
-  teal: "border-warden-soul-light/30 bg-warden-soul-light/10 text-warden-soul-light",
-  amber: "border-[#D8B35E]/30 bg-[#D8B35E]/10 text-[#E3C46F]",
-  red: "border-[#E36C61]/30 bg-[#E36C61]/10 text-[#F08A7D]",
-  green: "border-[#93B978]/30 bg-[#93B978]/10 text-[#A9CB8A]",
-  blue: "border-warden-heart/30 bg-warden-heart/10 text-warden-heart",
-  moss: "border-warden-lichen/30 bg-warden-lichen/10 text-warden-lichen",
+  teal: "border-[#7CFFB2]/28 bg-[#7CFFB2]/8 text-[#B7F7D0]",
+  amber: "border-[#F5B84B]/30 bg-[#F5B84B]/10 text-[#F5B84B]",
+  red: "border-[#FF5C5C]/30 bg-[#FF5C5C]/10 text-[#FF7A7A]",
+  green: "border-[#7CFFB2]/28 bg-[#7CFFB2]/8 text-[#B7F7D0]",
+  blue: "border-[#63A8FF]/30 bg-[#63A8FF]/10 text-[#8EC2FF]",
+  moss: "border-[#A9B3AD]/26 bg-[#A9B3AD]/8 text-[#A9B3AD]",
+  gold: "border-[#D7C28A]/32 bg-[#D7C28A]/10 text-[#D7C28A]",
 };
 
 export function cn(...classes: Array<string | false | null | undefined>) {
@@ -36,7 +37,7 @@ export function SourceBadge({ children, tone = "teal" }: { children: React.React
 
 export function SectionEyebrow({ children }: { children: string }) {
   return (
-    <p className="font-mono text-xs uppercase tracking-[0.28em] text-warden-soul-light">
+    <p className="font-mono text-xs uppercase tracking-[0.28em] text-warden-muted">
       {children}
     </p>
   );
@@ -68,7 +69,7 @@ export function SectionHeading({
 
 export function MarketingShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#090A0B] text-foreground">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#070A0E] text-foreground">
       <MarketingHeader />
       {children}
       <MarketingFooter />
@@ -91,7 +92,7 @@ export function PageHero({
 }) {
   return (
     <section className="relative overflow-hidden border-b border-white/10 px-4 py-20 sm:px-6 lg:px-8">
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(215,227,106,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(215,227,106,0.03)_1px,transparent_1px)] bg-[size:72px_72px]" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(38,52,66,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(38,52,66,0.12)_1px,transparent_1px)] bg-[size:72px_72px]" />
       <div className="mx-auto max-w-7xl">
         <div className="max-w-4xl">
           <SectionEyebrow>{eyebrow}</SectionEyebrow>
@@ -109,7 +110,7 @@ export function PageHero({
                   external={primary.external}
                   event={primary.event ?? "hero_cta_run_demo_clicked"}
                   eventProps={{ section: eyebrow.toLowerCase(), cta_label: primary.label }}
-                  className="inline-flex items-center justify-center gap-2 rounded-md border border-warden-soul-light/40 bg-warden-soul-light/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-warden-soul-light/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warden-soul-light/60"
+                  className="inline-flex items-center justify-center gap-2 rounded-md border border-white/15 bg-warden-text px-5 py-3 text-sm font-semibold text-warden-black transition hover:bg-warden-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warden-text/60"
                 >
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   {primary.label}
@@ -140,7 +141,7 @@ export function Checklist({ items }: { items: string[] }) {
     <ul className="space-y-3">
       {items.map((item) => (
         <li key={item} className="flex gap-3 text-sm leading-6 text-warden-muted">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-warden-soul-light" aria-hidden="true" />
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-warden-bone" aria-hidden="true" />
           <span>{item}</span>
         </li>
       ))}
@@ -150,7 +151,7 @@ export function Checklist({ items }: { items: string[] }) {
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#090A0B] px-4 py-12 sm:px-6 lg:px-8">
+    <footer className="border-t border-white/10 bg-[#070A0E] px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1.2fr_2.4fr]">
         <div>
           <Link href="/" className="flex items-center gap-3">

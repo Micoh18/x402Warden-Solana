@@ -26,7 +26,7 @@ export function MarketingHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 border-b bg-[#090A0B]/92 backdrop-blur-xl transition-colors",
+        "sticky top-0 z-50 border-b bg-[#070A0E]/92 backdrop-blur-xl transition-colors",
         scrolled ? "border-warden-soul-light/20" : "border-white/10"
       )}
     >
@@ -70,7 +70,7 @@ export function MarketingHeader() {
             href={landingLinks.demo}
             event="hero_cta_run_demo_clicked"
             eventProps={{ section: "header", cta_label: "Run Demo" }}
-            className="inline-flex h-10 items-center gap-2 rounded-md border border-warden-soul-light/35 bg-warden-soul-light/10 px-4 text-sm font-semibold text-white transition hover:bg-warden-soul-light/15"
+            className="inline-flex h-10 items-center gap-2 rounded-md border border-white/15 bg-warden-text px-4 text-sm font-semibold text-warden-black transition hover:bg-warden-bone"
           >
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
             Run demo
@@ -90,7 +90,7 @@ export function MarketingHeader() {
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-[#090A0B] px-4 py-4 lg:hidden">
+        <div className="border-t border-white/10 bg-[#070A0E] px-4 py-4 lg:hidden">
           <div className="flex flex-col gap-2">
             {siteNavItems.map((item) => (
               <Link
@@ -122,7 +122,7 @@ export function MarketingHeader() {
                     cta_label: "Run Demo",
                   });
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-md border border-warden-soul-light/35 bg-warden-soul-light/10 px-3 py-2 text-sm font-semibold text-white"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-white/15 bg-warden-text px-3 py-2 text-sm font-semibold text-warden-black"
               >
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 Run demo

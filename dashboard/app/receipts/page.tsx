@@ -63,7 +63,7 @@ export default function ReceiptsPage() {
           </div>
         </section>
 
-        <section className="border-t border-white/10 bg-[#111317] px-4 py-20 sm:px-6 lg:px-8">
+        <section className="border-t border-white/10 bg-[#0B1118] px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <SectionHeading
               eyebrow="evidence"
@@ -103,7 +103,7 @@ export default function ReceiptsPage() {
               ["Recovered", "Escrow state changes to refunded through merchant accept or auto-refund path."],
             ].map(([title, copy], index) => (
               <article key={title} className="border border-white/10 bg-white/[0.03] p-5">
-                <SourceBadge tone={index === 0 ? "teal" : index === 1 ? "red" : "green"}>{title}</SourceBadge>
+                <SourceBadge tone={index === 0 ? "teal" : index === 1 ? "red" : "blue"}>{title}</SourceBadge>
                 <p className="mt-5 text-sm leading-6 text-warden-muted">{copy}</p>
               </article>
             ))}
@@ -114,7 +114,7 @@ export default function ReceiptsPage() {
               external
               event="sdk_docs_clicked"
               eventProps={{ section: "receipts", cta_label: "Read SDK receipt builders" }}
-              className="text-sm font-semibold text-warden-soul-light hover:text-white"
+              className="text-sm font-semibold text-warden-bone hover:text-white"
             >
               Read SDK receipt builders
             </TrackedLink>
